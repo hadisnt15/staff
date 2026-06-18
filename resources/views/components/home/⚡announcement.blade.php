@@ -20,7 +20,7 @@ new class extends Component
         <!-- Carousel wrapper -->
         <div class="relative h-30 overflow-hidden rounded-base bg-gradient-to-br from-emerald-50 via-emerald-100 to-emerald-200">
             <!-- Item -->
-                @forelse ($this->announcements as $announcement)
+            @forelse ($this->announcements as $announcement)
                 <div class="hidden duration-700 ease-in-out" data-carousel-item>
                     <div class="px-2 py-1">
                         <div class="border-b border-gray-200">

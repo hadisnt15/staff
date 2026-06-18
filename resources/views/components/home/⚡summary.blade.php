@@ -56,7 +56,7 @@ new class extends Component
                 <div class="">
                     <span class="font-semibold text-gray-500">Jumlah Tepat Waktu</span>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 border border-gray-400">
+                <div class="w-full bg-gray-200 rounded-full h-1.5 border border-gray-400">
                     <div class="bg-emerald-500 h-2 rounded-full" style="width:{{ $this->summary['presenceCount'] > 0 ? round($this->summary['ontimeCount'] / $this->summary['presenceCount'] * 100, 2) : 0 }}%"></div>
                 </div>
                 <div class="text-right">

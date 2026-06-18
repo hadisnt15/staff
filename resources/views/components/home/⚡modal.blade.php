@@ -21,6 +21,10 @@ new class extends Component
     public $showModalBusinessTrip = false;
     public $showModalLeave = false;
     public $photoUploaded = false;
+    public $officeLat = -3.3579102791671946;
+    public $officeLng = 114.63293744171641;
+    public $allowedRadius = 20; // meter
+    public $insideRadius = false;
 
     protected $rules = [
         // 'photo' => 'required|image|max:2048',
@@ -33,6 +37,7 @@ new class extends Component
         'openCheckoutModal' => 'openModalCheckout',
         'openBusinessTripModal' => 'openModalBusinessTrip',
         'openLeaveModal' => 'openModalLeave',
+        'setRadiusStatus',
     ];
 
     public function openModalCheckin()
@@ -61,6 +66,30 @@ new class extends Component
         $this->showModalLeave = true;
         $this->type = 'tidak_hadir';
         $this->dispatch('init-gps');
+    }
+
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // meter
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a =
+            sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) *
+            cos(deg2rad($lat2)) *
+            sin($dLon / 2) *
+            sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
+    }
+
+    public function setRadiusStatus($status)
+    {
+        $this->insideRadius = $status;
     }
 
     public function mount()
@@ -117,6 +146,23 @@ new class extends Component
         }
         
         $this->validate();
+
+        $distance = $this->calculateDistance(
+            $this->lat,
+            $this->lng,
+            $this->officeLat,
+            $this->officeLng
+        );
+
+        if ($distance > $this->allowedRadius) {
+            $this->addError(
+                'lat',
+                'Anda berada di luar area absensi. Jarak Anda ' .
+                round($distance) .
+                ' meter dari lokasi kantor.'
+            );
+            return;
+        }
 
         // 🔥 CONVERT BASE64 → FILE
         $image = str_replace('data:image/jpeg;base64,', '', $this->photoBase64);
@@ -318,6 +364,7 @@ new class extends Component
                 <div class="flex flex-col items-center justify-center text-center px-2 py-2">
                     <button 
                         wire:click="save"
+                        @disabled(!$insideRadius)
                         wire:loading.attr="disabled"
                         wire:target="save"
                         class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
@@ -423,6 +470,7 @@ new class extends Component
                 <div class="flex flex-col items-center justify-center text-center px-2 py-2">
                     <button 
                         wire:click="save"
+                        @disabled(!$insideRadius)
                         wire:loading.attr="disabled"
                         wire:target="save"
                         class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
@@ -514,6 +562,7 @@ new class extends Component
                 <div class="flex flex-col items-center justify-center text-center px-2 py-2">
                     <button 
                         wire:click="save"
+                        @disabled(!$insideRadius)
                         wire:loading.attr="disabled"
                         wire:target="save"
                         class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
@@ -605,6 +654,7 @@ new class extends Component
                 <div class="flex flex-col items-center justify-center text-center px-2 py-2">
                     <button 
                         wire:click="save"
+                        @disabled(!$insideRadius)
                         wire:loading.attr="disabled"
                         wire:target="save"
                         class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
@@ -660,6 +710,24 @@ new class extends Component
         if (el) el.innerText = formatted;
     }
 
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) *
+            Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c;
+    }
+
     function initGPS() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -683,11 +751,27 @@ new class extends Component
                     const officeLat = -3.3579102791671946;
                     const officeLng = 114.63293744171641;
 
+                    const distance = calculateDistance(
+                        lat, lng, officeLat, officeLng
+                    );
+
+                    if (distance <= 20) {
+                        @this.call('setRadiusStatus', true);
+                    } else {
+                        @this.call('setRadiusStatus', false);
+
+                        alert(
+                            'Anda berada di luar area absensi. Jarak: ' +
+                            Math.round(distance) +
+                            ' meter'
+                        );
+                    }
+
                     L.circle([officeLat, officeLng], {
                         color: 'green',
                         fillColor: '#00b4d8',
                         fillOpacity: 0.5,
-                        radius: 30
+                        radius: 20
                     }).addTo(map);
 
                     // L.popup()
