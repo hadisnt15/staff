@@ -40,13 +40,11 @@ new #[Title('Masuk')] class extends Component
                     Selamat Datang di
                 </p>
     
-                <h1 class="mt-1 font-extrabold text-gray-900
-                        text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
-                    StaffPort
+                <h1 class="mt-1 font-extrabold text-gray-900 text-2xl sm:text-xl md:text-5xl lg:text-6xl leading-tight">
+                    Staff Management
                 </h1>
     
-                <h2 class="mt-1 font-bold text-emerald-800
-                        text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-wide">
+                <h2 class="mt-1 font-bold text-emerald-800 text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-wide">
                     PT Kapuas Kencana Jaya
                 </h2>
     
