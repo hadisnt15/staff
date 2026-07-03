@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Filament\Facades\Filament;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -33,3 +34,13 @@ Route::post('/logout', function() {
     request()->session()->regenerateToken();
     return redirect('/userLogin');
 })->name('logout');
+
+Route::get('/debug-panel', function () {
+    return [
+        'auth_check' => Auth::check(),
+        'auth_user' => Auth::user()?->email,
+        'filament_guard' => Filament::getPanel('admin')->getAuthGuard(),
+        'guard_check' => Auth::guard(Filament::getPanel('admin')->getAuthGuard())->check(),
+        'guard_user' => Auth::guard(Filament::getPanel('admin')->getAuthGuard())->user()?->email,
+    ];
+});
