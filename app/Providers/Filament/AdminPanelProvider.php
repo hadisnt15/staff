@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('Kelola Karyawan - StaffPort')
             ->login()
+            ->authGuard('web')
             ->colors([
                 'primary' => Color::Emerald,
             ])
