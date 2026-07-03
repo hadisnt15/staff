@@ -1,4 +1,4 @@
-ALTER VIEW vattendance_summaries AS 
+CREATE VIEW vattendance_summaries AS 
 SELECT
 	T0.id_pengguna, 
 	T0.nama_pengguna, 
