@@ -35,12 +35,11 @@ Route::post('/logout', function() {
     return redirect('/userLogin');
 })->name('logout');
 
-Route::get('/debug-panel', function () {
+Route::get('/cek-user', function () {
     return [
-        'auth_check' => Auth::check(),
-        'auth_user' => Auth::user()?->email,
-        'filament_guard' => Filament::getPanel('admin')->getAuthGuard(),
-        'guard_check' => Auth::guard(Filament::getPanel('admin')->getAuthGuard())->check(),
-        'guard_user' => Auth::guard(Filament::getPanel('admin')->getAuthGuard())->user()?->email,
+        'auth' => auth()->check(),
+        'id' => auth()->id(),
+        'email' => auth()->user()?->email,
+        'role' => auth()->user()?->roles->pluck('name'),
     ];
 });
