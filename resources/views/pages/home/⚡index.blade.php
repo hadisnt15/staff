@@ -56,7 +56,7 @@ new #[Title('Halaman Utama')] class extends Component
 </div>
 <script>
     function updateClock() {
-        const now = new Date('2026-06-14T11:49:02');
+        const now = new Date();
 
         const date = now.toLocaleDateString('id-ID', {
             weekday: 'long',
