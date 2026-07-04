@@ -22,7 +22,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->report(function (Throwable $e) {
-            logger()->error($e);
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+
+            if ($e->getStatusCode() === 403) {
+                dd(
+                    $e->getMessage(),
+                    $e->getTraceAsString()
+                );
+            }
+
         });
     })->create();
