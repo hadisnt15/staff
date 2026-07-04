@@ -313,17 +313,17 @@ new class extends Component
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
                 
-                <div class="px-2 py-1 flex gap-4">
-                    <label>
-                        <input type="radio" wire:model="mode" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
+                <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
                         Datang
                     </label>
-                    <label>
-                        <input type="radio" wire:model="mode" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
                         Selesai Istirahat
                     </label>
-                    <label>
-                        <input type="radio" wire:model="mode" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
                         Selesai Izin Keluar
                     </label>
                 </div>
@@ -419,17 +419,17 @@ new class extends Component
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
                 
-                <div class="px-2 py-1 flex gap-4">
-                    <label>
-                        <input type="radio" wire:model="mode" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
+                <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
                         Pulang
                     </label>
-                    <label>
-                        <input type="radio" wire:model="mode" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
                         Mulai Istirahat
                     </label>
-                    <label>
-                        <input type="radio" wire:model="mode" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
                         Mulai Izin Keluar
                     </label>
                 </div>
