@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -43,3 +44,15 @@ Route::get('/cek-user', function () {
         'role' => auth()->user()?->roles->pluck('name'),
     ];
 });
+
+Route::get('/debug-admin', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+    return [
+        'auth' => auth()->check(),
+        'panel' => Filament::getCurrentPanel()?->getId(),
+        'canAccessPanel' => auth()->user()?->canAccessPanel(Filament::getCurrentPanel()),
+        'canViewAny' => App\Filament\Resources\Users\UserResource::canViewAny(),
+        'gate' => Gate::allows('viewAny', App\Models\User::class),
+    ];
+})->middleware('auth');
