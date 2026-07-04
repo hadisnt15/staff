@@ -22,82 +22,47 @@ new class extends Component
 ?>
 
 <div>
-    {{-- tombol presensi desktop --}}
-    <div class="md:block hidden">
-        <div class="grid grid-cols-4 mt-4 gap-4">
-            <div>
-                <button
-                    wire:click="$dispatch('openCheckinModal')" @disabled($this->buttons['checkin']) title="{{ $this->buttons['checkin'] ? 'Tidak bisa absen masuk saat ini' : '' }}" 
-                    class="bg-primary hover:bg-emerald-800 w-full h-20 flex items-center justify-center border border-emerald-50 rounded-base shadow-lg text-xl text-white {{ $this->buttons['checkin'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <i class="ri-login-circle-fill text-5xl text-neutral-primary-soft"></i> 
-                    <span class="font-bold px-2">Masuk</span>
-                </button>
-            </div>
-            <div>
-                <button
-                    wire:click="$dispatch('openCheckoutModal')" @disabled($this->buttons['checkout']) title="{{ $this->buttons['checkout'] ? 'Tidak bisa absen keluar saat ini' : '' }}" 
-                    class="bg-primary hover:bg-emerald-800 w-full h-20 flex items-center justify-center border border-emerald-50 rounded-base shadow-lg text-xl text-white {{ $this->buttons['checkout'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <i class="ri-logout-circle-fill text-5xl text-neutral-primary-soft"></i> 
-                    <span class="font-bold px-2">Keluar</span>
-                </button>
-            </div>
-            <div>
-                <button
-                    wire:click="$dispatch('openBusinessTripModal')" @disabled($this->buttons['businessTrip']) title="{{ $this->buttons['businessTrip'] ? 'Hanya untuk Driver & Salesman' : '' }}" 
-                    class="bg-primary hover:bg-emerald-800 w-full h-20 flex items-center justify-center border border-emerald-50 rounded-base shadow-lg text-xl text-white {{ $this->buttons['businessTrip'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <i class="ri-compass-3-fill text-5xl text-neutral-primary-soft"></i> 
-                    <span class="font-bold px-2">Luar Kota</span>
-                </button>
-            </div>
-            <div>
-                <button
-                    wire:click="$dispatch('openLeaveModal')" @disabled($this->buttons['leave']) title="{{ $this->buttons['leave'] ? 'Anda sudah hadir hari ini' : '' }}"
-                    class="bg-primary hover:bg-emerald-800 w-full h-20 flex items-center justify-center border border-emerald-50 rounded-base shadow-lg text-xl text-white {{ $this->buttons['leave'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <i class="ri-indeterminate-circle-fill text-5xl text-neutral-primary-soft"></i> 
-                    <span class="font-bold px-2">Tidak Hadir</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    {{-- tombol presensi desktop end --}}
+    <div class="grid grid-cols-4 gap-3 mt-4">
 
-    {{-- tombol presensi mobile --}}
-    <div class="md:hidden block">
-        <div class="grid grid-cols-4 mt-2 gap-4">
-            <div class="flex flex-col items-center justify-center text-center">
-                <button wire:click="$dispatch('openCheckinModal')" @disabled($this->buttons['checkin']) title="{{ $this->buttons['checkin'] ? 'Tidak bisa absen masuk saat ini' : '' }}" class="{{ $this->buttons['checkin'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <div class="bg-primary hover:bg-emerald-800 w-20 h-15 flex items-center justify-center border border-emerald-50 rounded-2xl shadow-lg">
-                        <i class="ri-login-circle-fill text-4xl text-neutral-primary-soft"></i>
-                    </div>
-                </button>
-                <span class="text-xs font-bold text-primary mt-1">Masuk</span>
+        {{-- Masuk --}}
+        <button wire:click="$dispatch('openCheckinModal')" @disabled($this->buttons['checkin']) title="{{ $this->buttons['checkin'] ? 'Tidak bisa absen masuk saat ini' : '' }}" class="group rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm shadow-emerald-200 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100">
+                <i class="ri-login-circle-fill text-2xl text-emerald-700"></i>
             </div>
-            <div class="flex flex-col items-center justify-center text-center">
-                <button wire:click="$dispatch('openCheckoutModal')" @disabled($this->buttons['checkout']) title="{{ $this->buttons['checkout'] ? 'Tidak bisa absen keluar saat ini' : '' }}" class="{{ $this->buttons['checkout'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <div class="bg-primary hover:bg-emerald-800 w-20 h-15 flex items-center justify-center border border-emerald-50 rounded-2xl shadow-lg">
-                        <i class="ri-logout-circle-fill text-4xl text-neutral-primary-soft"></i>
-                    </div>
-                </button>
-                <span class="text-xs font-bold text-primary mt-1">Keluar</span>
+            <p class="mt-2 text-[11px] md:text-sm font-semibold text-emerald-800">
+                Masuk
+            </p>
+        </button>
+
+        {{-- Keluar --}}
+        <button wire:click="$dispatch('openCheckoutModal')" @disabled($this->buttons['checkout']) title="{{ $this->buttons['checkout'] ? 'Tidak bisa absen keluar saat ini' : '' }}" class="group rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm shadow-emerald-200 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-red-50">
+                <i class="ri-logout-circle-fill text-2xl text-red-500"></i>
             </div>
-            <div class="flex flex-col items-center justify-center text-center">
-                <button wire:click="$dispatch('openBusinessTripModal')" @disabled($this->buttons['businessTrip']) title="{{ $this->buttons['businessTrip'] ? 'Hanya untuk Driver & Salesman' : '' }}" class="{{ $this->buttons['businessTrip'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <div class="bg-primary hover:bg-emerald-800 w-20 h-15 flex items-center justify-center border border-emerald-50 rounded-2xl shadow-lg">
-                        <i class="ri-compass-3-fill text-4xl text-neutral-primary-soft"></i>
-                    </div>
-                </button>
-                <span class="text-xs font-bold text-primary mt-1">Luar Kota</span>
+            <p class="mt-2 text-[11px] md:text-sm font-semibold text-emerald-800">
+                Keluar
+            </p>
+        </button>
+
+        {{-- Luar Kota --}}
+        <button wire:click="$dispatch('openBusinessTripModal')" @disabled($this->buttons['businessTrip']) title="{{ $this->buttons['businessTrip'] ? 'Hanya untuk Driver & Salesman' : '' }}" class="group rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm shadow-emerald-200 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-sky-50">
+                <i class="ri-compass-3-fill text-2xl text-sky-500"></i>
             </div>
-            <div class="flex flex-col items-center justify-center text-center">
-                <button wire:click="$dispatch('openLeaveModal')"  @disabled($this->buttons['leave']) title="{{ $this->buttons['leave'] ? 'Hanya untuk Driver & Salesman' : '' }}" class="{{ $this->buttons['leave'] ? 'opacity-50 cursor-not-allowed' : '' }}">
-                    <div class="bg-primary hover:bg-emerald-800 w-20 h-15 flex items-center justify-center border border-emerald-50 rounded-2xl shadow-lg">
-                        <i class="ri-indeterminate-circle-fill text-4xl text-neutral-primary-soft"></i>
-                    </div>
-                </button>
-                <span class="text-xs font-bold text-primary mt-1">Tidak Hadir</span>
+            <p class="mt-2 text-[11px] md:text-sm font-semibold text-emerald-800">
+                Luar Kota
+            </p>
+        </button>
+
+        {{-- Tidak Hadir --}}
+        <button wire:click="$dispatch('openLeaveModal')" @disabled($this->buttons['leave']) title="{{ $this->buttons['leave'] ? 'Anda sudah hadir hari ini' : '' }}" class="group rounded-2xl border border-emerald-100 bg-white p-3 shadow-sm shadow-emerald-200 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:bg-emerald-50 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            <div class="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50">
+                <i class="ri-indeterminate-circle-fill text-2xl text-amber-500"></i>
             </div>
-            
-        </div>
+            <p class="mt-2 text-[11px] md:text-sm font-semibold text-emerald-800">
+                Tidak Hadir
+            </p>
+        </button>
+
     </div>
-    {{-- tombol presensi mobile end --}} 
 </div>

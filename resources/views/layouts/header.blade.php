@@ -9,7 +9,7 @@
                         class="mr-1 h-8 border rounded-full border-emerald-950"
                         alt="Flowbite Logo"
                     /> --}}
-                    <span class="self-center text-md md:text-lg font-bold whitespace-nowrap text-white ms-1">Staff Management Portal</span>
+                    <span class="self-center text-md md:text-lg font-bold whitespace-nowrap text-white ms-1">Staff Management</span>
                     {{-- <span class="self-center text-xs md:text-sm font-semibold whitespace-nowrap text-white ms-1">Staff Management Portal</span> --}}
                     </a>
                 </div>

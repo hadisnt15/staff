@@ -32,87 +32,50 @@ new #[Title('Masuk')] class extends Component
 };
 ?>
 
-<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-4">
-    <div class="relative overflow-x-auto shadow-md rounded-lg border border-gray-200 py-4 px-6 bg-white">
-        <div class="max-w-7xl mx-auto px-4 md:px-6 py-4">
-            <div class="px-2 py-6 text-center">
-                <p class="text-sm sm:text-base text-gray-600 font-medium">
-                    Selamat Datang di
-                </p>
-    
-                <h1 class="mt-1 font-extrabold text-gray-900 text-2xl sm:text-xl md:text-5xl lg:text-6xl leading-tight">
-                    Staff Management
-                </h1>
-    
-                <h2 class="mt-1 font-bold text-emerald-800 text-xl sm:text-2xl md:text-3xl lg:text-4xl tracking-wide">
-                    PT Kapuas Kencana Jaya
-                </h2>
-    
-                <!-- Accent line -->
-                <div class="mx-auto mt-4 w-16 h-1 bg-emerald-800 rounded-full"></div>
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 flex items-center justify-center px-4">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-[450px] h-[450px] rounded-full bg-emerald-400/10 blur-3xl"></div>
+    </div>
+    <div class="relative w-full max-w-md">
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+            <div class="text-center">
+                <div class="mx-auto w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center">
+                    <i class="ri-team-fill text-4xl text-emerald-700"></i>
+                </div>
+                <h1 class="mt-5 text-3xl font-black text-gray-800">Staff Management</h1>
+                <p class="text-gray-500 mt-2">PT Kapuas Kencana Jaya</p>
             </div>
-    
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-                <div class="hidden md:flex relative overflow-hidden rounded-xl">
-    
-                    <!-- Decorative vertical line -->
-                    <div class="absolute right-8 top-0 h-full w-px bg-gradient-to-b from-transparent via-green-700 to-transparent opacity-30"></div>
-    
-                    <!-- Content -->
-                    <div class="relative z-10 p-10 flex flex-col justify-center">
-                        
-                        <h2 class="text-2xl font-bold text-gray-800 leading-snug">
-                            Digitalisasi dan Automasi Manajemen Karyawan dalam Satu Platform
-                        </h2>
-    
-                        <p class="mt-4 text-sm text-gray-600 max-w-sm leading-relaxed">
-                            Staff Management Portal membantu pengelolaan karyawan dengan lebih mudah, efisien, dan terstruktur. Mengurangi pekerjaan manual dan berulang, sekaligus meningkatkan akurasi dan produktivitas dalam setiap proses pengelolaan karyawan.
-                        </p>
-    
-                        <!-- Divider -->
-                        <div class="mt-6 w-16 h-1 bg-emerald-800 rounded-full"></div>
-    
-                        <!-- Keywords -->
-                        <div class="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-gray-500">
-                            <span class="px-3 py-1 border border-gray-300 rounded-full">Automation</span>
-                            <span class="px-3 py-1 border border-gray-300 rounded-full">Efficient</span>
-                            <span class="px-3 py-1 border border-gray-300 rounded-full">Flexible</span>
-                        </div>
-    
-                    </div>
-    
-                    <!-- Subtle background shape -->
-                    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-800/5 rounded-full"></div>
+            <div class="grid grid-cols-3 gap-3 mt-8">
+                <div class="rounded-xl bg-emerald-50 p-3 text-center">
+                    <i class="ri-user-star-line text-2xl text-emerald-700"></i>
+                    <p class="text-xs mt-2">Employee</p>
+                </div>
+                <div class="rounded-xl bg-emerald-50 p-3 text-center">
+                    <i class="ri-time-line text-2xl text-emerald-700"></i>
+                    <p class="text-xs mt-2">Attendance</p>
+                </div>
+                <div class="rounded-xl bg-emerald-50 p-3 text-center">
+                    <i class="ri-bar-chart-grouped-line text-2xl text-emerald-700"></i>
+                    <p class="text-xs mt-2">Monitoring</p>
+                </div>
+            </div>
+            <form wire:submit.prevent="login" class="space-y-5 mt-8">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" wire:model="email" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div>
-                    <div id="accordion-collapse" data-accordion="collapse"
-                        class="rounded-xl overflow-hidden shadow-md ">
-                        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                            <form wire:submit.prevent="login" class="space-y-4 md:space-y-6">
-                                <div>
-                                    <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-                                    <input type="email" wire:model="email"
-                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 text-gray-700 placeholder-gray-400 focus:ring focus:ring-indigo-200 focus:border-indigo-300"
-                                        placeholder="Email" required autocomplete="off" autofocus>
-                                    @error('email')
-                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Kata Sandi</label>
-                                    <input type="password" wire:model="password"
-                                        class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 text-gray-700 placeholder-gray-400 focus:ring focus:ring-indigo-200 focus:border-indigo-300"
-                                        placeholder="••••••••" required autocomplete="off">
-                                    @error('password')
-                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <button class="w-full mt-3 bg-emerald-800 hover:bg-emerald-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                    Masuk
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                    <label class="text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" wire:model="password" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+                <button class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold transition">Masuk</button>
+            </form>
+            <div class="mt-8 text-center">
+                <div class="flex justify-center gap-2 text-xs">
+                    <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">Automated</span>
+                    <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">Centralized</span>
+                    <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">Efficient</span>
                 </div>
             </div>
         </div>
