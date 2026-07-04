@@ -58,54 +58,68 @@ class AttendanceService
         $leave = $summary['leaveCount'] ?? 0;
         $workday = $summary['workdayCount'] ?? 0;
 
-        if ($workday == 0) {
+        if ($presence === 0) {
             return [
                 'type' => 'info',
-                'message' => '📊 Belum ada data presensi bulan ini.'
+                'message' => '📊 Belum ada catatan kehadiran bulan ini.',
             ];
         }
 
+        $presenceRatio = $workday > 0 ? $presence / $workday : 0;
         $lateRatio = $presence > 0 ? $late / $presence : 0;
         $leaveRatio = $workday > 0 ? $leave / $workday : 0;
 
-        if ($leaveRatio > 0.3) {
+        // Kehadiran sangat rendah
+        if ($leaveRatio >= 0.30) {
             return [
                 'type' => 'danger',
-                'message' => '🚨 Kehadiran Anda cukup rendah bulan ini. Yuk tingkatkan kedisiplinan!'
+                'message' => '🚨 Kehadiran Anda masih rendah bulan ini. Mari tingkatkan kedisiplinan agar kehadiran Anda semakin baik.',
             ];
         }
 
-        if ($lateRatio > 0.4) {
+        // Terlalu sering terlambat
+        if ($lateRatio >= 0.40) {
             return [
                 'type' => 'warning',
-                'message' => '⏰ Anda cukup sering terlambat. Coba atur waktu lebih baik ya!'
+                'message' => '⏰ Anda cukup sering terlambat bulan ini. Cobalah mengatur waktu keberangkatan lebih baik.',
             ];
         }
 
+        // Hadir sempurna & tidak pernah terlambat
+        if ($presence == $workday && $late == 0) {
+            return [
+                'type' => 'success',
+                'message' => '🏆 Luar biasa! Kehadiran Anda sempurna tanpa keterlambatan bulan ini.',
+            ];
+        }
+
+        // Hadir minimal 95% dan terlambat maksimal 1 kali
+        if ($presenceRatio >= 0.95 && $late <= 1) {
+            return [
+                'type' => 'success',
+                'message' => '🌟 Kehadiran Anda sangat baik. Pertahankan konsistensi ini!',
+            ];
+        }
+
+        // Hadir minimal 90%
+        if ($presenceRatio >= 0.90) {
+            return [
+                'type' => 'success',
+                'message' => '👍 Kehadiran Anda sudah baik. Terus pertahankan kedisiplinan agar semakin konsisten.',
+            ];
+        }
+
+        // Ada keterlambatan tetapi tidak berlebihan
         if ($late > 0) {
             return [
                 'type' => 'warning',
-                'message' => '⚠️ Anda tercatat beberapa kali terlambat. Tetap semangat untuk lebih tepat waktu!'
-            ];
-        }
-
-        if ($presence == $workday) {
-            return [
-                'type' => 'success',
-                'message' => '🔥 Luar biasa! Kehadiran Anda sempurna bulan ini!'
-            ];
-        }
-
-        if ($presence >= ($workday * 0.9)) {
-            return [
-                'type' => 'success',
-                'message' => '👍 Kehadiran Anda sangat baik. Pertahankan!'
+                'message' => '⚠️ Anda tercatat terlambat beberapa kali. Semoga bulan berikutnya bisa lebih tepat waktu.',
             ];
         }
 
         return [
             'type' => 'info',
-            'message' => '🙂 Kehadiran Anda cukup baik, tetap tingkatkan konsistensi ya!'
+            'message' => '🙂 Kehadiran Anda cukup baik. Tetap jaga konsistensi dan semangat bekerja.',
         ];
     }
 
