@@ -12,9 +12,9 @@ Route::get('/', function () {
 });
 
 Route::livewire('/userLogin', 'pages::auth.login')->middleware('guest')->name('login');
-Route::get('/admin/login', function () {
-    return redirect()->route('login');
-})->name('filament.admin.auth.login');
+// Route::get('/admin/login', function () {
+//     return redirect()->route('login');
+// })->name('filament.admin.auth.login');
 
 // Route::get('/logout', function () {
 //     Auth::logout();
