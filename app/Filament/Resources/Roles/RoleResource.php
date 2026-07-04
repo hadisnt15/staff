@@ -28,6 +28,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
+use Illuminate\Database\Eloquent\Builder;
 
 class RoleResource extends Resource
 {
@@ -161,5 +162,19 @@ class RoleResource extends Resource
     public static function getEssentialsPlugin(): ?FilamentShieldPlugin
     {
         return FilamentShieldPlugin::get();
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        $user = auth()->user();
+
+        // Selain super_admin, sembunyikan role super_admin
+        if (! $user->hasRole('super_admin')) {
+            $query->where('name', '!=', 'super_admin');
+        }
+
+        return $query;
     }
 }

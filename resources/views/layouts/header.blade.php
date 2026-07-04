@@ -28,12 +28,12 @@
                                 <span class="block text-sm text-gray-100 truncate">{{ auth()->user()->email }}</span>
                             </div>
                             <ul class="py-1 text-gray-100" aria-labelledby="dropdown">
-                                {{-- admin-menu --}}
+                                {{-- superadmin-menu --}}
                                 <livewire:header.user />
-                                @if(auth()->user()->hasRole(['admin','super_admin']))
+                                @if(auth()->user()->hasRole(['manager','super_admin']))
                                     <div class="border-t border-gray-200 my-1"></div>
                                     
-                                    {{-- admin-menu --}}
+                                    {{-- superadmin-menu --}}
                                     <livewire:header.admin />
                                 @endif
                             </ul>
