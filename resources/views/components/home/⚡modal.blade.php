@@ -23,7 +23,7 @@ new class extends Component
     public $photoUploaded = false;
     public $officeLat = -3.3579102791671946;
     public $officeLng = 114.63293744171641;
-    public $allowedRadius = 20; // meter
+    public $allowedRadius = 30; // meter
     public $insideRadius = false;
 
     protected $rules = [
@@ -164,11 +164,13 @@ new class extends Component
             return;
         }
 
+        $userId = auth()->id();
+
         // 🔥 CONVERT BASE64 → FILE
         $image = str_replace('data:image/jpeg;base64,', '', $this->photoBase64);
         $image = str_replace(' ', '+', $image);
 
-        $imageName = 'attendance/' . uniqid() . '.jpg';
+        $imageName = sprintf('attendance/%d/%s.jpg', $userId, now()->format('Ymd_His') . '_' . uniqid());
 
         \Storage::disk('public')->put($imageName, base64_decode($image));
 
@@ -183,8 +185,6 @@ new class extends Component
         if ($this->mode === 'permission') {
             $permission = 1;
         }
-
-        $userId = auth()->id();
 
         $last = Attendance::where('user_id', $userId)
             ->latest('attendance_datetime')
@@ -755,7 +755,7 @@ new class extends Component
                         lat, lng, officeLat, officeLng
                     );
 
-                    if (distance <= 20) {
+                    if (distance <= 30) {
                         @this.call('setRadiusStatus', true);
                     } else {
                         @this.call('setRadiusStatus', false);
@@ -771,7 +771,7 @@ new class extends Component
                         color: 'green',
                         fillColor: '#00b4d8',
                         fillOpacity: 0.5,
-                        radius: 20
+                        radius: 30
                     }).addTo(map);
 
                     // L.popup()
