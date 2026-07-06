@@ -16,6 +16,16 @@ class SalaryForm
                 TextInput::make('salary_name')  
                     ->required()
                     ->unique(ignoreRecord: true),
+                Select::make('salary_code')
+                    ->required()
+                    ->unique(ignoreRecord: true),
+                Select::make('salary_rule')
+                    ->options([
+                        'tetap' => 'Tetap',
+                        'perhari' => 'Perhari',
+                        'bersyarat' => 'Bersyarat',
+                    ])
+                    ->required(),
                 Select::make('salary_type')
                     ->options([
                         'bulanan' => 'Bulanan',
