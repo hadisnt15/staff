@@ -16,7 +16,7 @@ class SalariesTable
             ->columns([
                 TextColumn::make('salary_name')
                     ->label('Komponen Gaji'),
-                TextColumn::make('salary_oode')
+                TextColumn::make('salary_code')
                     ->label('Kode Gaji'),
                 TextColumn::make('salary_type')
                     ->label('Tipe Gaji'),
