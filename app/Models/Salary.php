@@ -9,6 +9,8 @@ class Salary extends Model
     protected $fillable = [
         'salary_name',
         'salary_type',
+        'salary_code',
+        'salary_rule',
         'salary_note'
     ];
 
