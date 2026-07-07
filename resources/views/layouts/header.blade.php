@@ -30,7 +30,7 @@
                             <ul class="py-1 text-gray-100" aria-labelledby="dropdown">
                                 {{-- superadmin-menu --}}
                                 <livewire:header.user />
-                                @if(auth()->user()->hasRole(['manager','super_admin']))
+                                @if(auth()->user()->hasRole(['general_manager','super_admin']))
                                     <div class="border-t border-gray-200 my-1"></div>
                                     
                                     {{-- superadmin-menu --}}

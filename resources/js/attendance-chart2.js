@@ -148,3 +148,11 @@ function renderAttendanceChart2() {
 document.addEventListener('livewire:navigated', () => {
     renderAttendanceChart2();
 });
+
+document.addEventListener('livewire:init', () => {
+    Livewire.on('refresh-chart', ({ chartData }) => {
+        const wrapper = document.getElementById('attendanceChartWrapper2');
+        wrapper.dataset.chart = JSON.stringify(chartData);
+        renderAttendanceChart2();
+    });
+});

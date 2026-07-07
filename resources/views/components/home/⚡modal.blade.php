@@ -236,6 +236,35 @@ new class extends Component
             throw new \Exception('Tidak boleh break dan izin bersamaan');
         }
 
+        $response = Http::timeout(60)
+            ->attach(
+                'photo',
+                fopen(
+                    storage_path('app/public/'.$photoPath),
+                    'r'
+                ),
+                basename($photoPath)
+            )
+            ->post(
+                'http://127.0.0.1:5000/verify',
+                [
+                    'user_id' => auth()->id()
+                ]
+            );
+
+        $result = $response->json();
+        if (!$result['success']) {
+            Storage::disk('public')->delete($photoPath);
+            $message = $result['message'] ?? 'Wajah tidak cocok';
+            if (isset($result['similarity'])) {
+                $message .= '. Similarity: '.$result['similarity'];
+            }
+            $this->addError(
+                'photo',
+                $message
+            );
+            return;
+        }
 
         Attendance::create([
             'user_id' => auth()->id(),
@@ -252,6 +281,7 @@ new class extends Component
             'attendance_lng' => $this->lng,
         ]);
 
+        $this->dispatch('attendance-saved');
         $this->reset(['note','photoBase64','lat','lng']);
         $this->showModalCheckin = false;
         $this->showModalCheckout = false;
@@ -280,9 +310,7 @@ new class extends Component
 <div>
     @if($showModalCheckin)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
-
             <div class="bg-white w-full max-w-md rounded-2xl border">
-
                 <div class="bg-primary rounded-t-2xl mb-4">
                     <h2 class="text-lg font-bold text-secondary p-2 text-white flex justify-between">
                         <div>
@@ -290,29 +318,27 @@ new class extends Component
                         </div>
                         <div>
                             <span wire:ignore class="bg-success-soft text-fg-success-strong text-sm font-bold px-1.5 py-1.5 rounded border border-emerald-200" id="clock"></span>
-                            <button wire:click="cancel" >
-                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded"><i class="ri-close-large-fill"></i></span>
+                            <button wire:click="cancel">
+                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded">
+                                    <i wire:loading.remove wire:target="cancel" class="ri-close-large-fill"></i>
+                                    <i wire:loading wire:target="cancel" class="ri-loader-4-line animate-spin"></i>
+                                </span>
                             </button>
                         </div>
                     </h2>
                 </div>
-
                 <div wire:ignore class="px-2 py-1">
                     <div id="cam" class="w-full aspect-video rounded-xl overflow-hidden  border border-emerald-500"></div>
                 </div>
-
                 @error('photo') 
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span> 
                 @enderror
-
                 <div class="px-2 py-1">
                     <div wire:ignore id="map" class="h-[150px] w-full rounded-xl  border border-emerald-500"></div>
                 </div>
-
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
-                
                 <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
@@ -327,7 +353,6 @@ new class extends Component
                         Selesai Izin Keluar
                     </label>
                 </div>
-
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -338,7 +363,6 @@ new class extends Component
                         <span class="text-red-500 text-sm" readonly>{{ $message }}</span> 
                     @enderror
                 </div>
-
                 <div class="grid grid-cols-3 gap-2 p-2 mt-4">
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="takeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
@@ -346,50 +370,31 @@ new class extends Component
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ambil Gambar</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="switch_camera()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-switch-fill text-3xl"></i>
-                        </button>
-                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ganti Kamera</span>
-                    </div>
-
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="retakeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-ai-2-fill text-3xl"></i>
+                            <i class="ri-camera-switch-fill text-3xl"></i>
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ulangi Gambar</span>
                     </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <button wire:click="save" @disabled(!$insideRadius) wire:loading.attr="disabled" wire:target="save" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <!-- icon normal -->
+                            <span wire:loading.remove wire:target="save">
+                                <i class="ri-arrow-down-circle-fill text-3xl"></i>
+                            </span>
+                            <!-- spinner -->
+                            <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
+                                <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
+                            </div>
+                        </button>
+                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center justify-center text-center px-2 py-2">
-                    <button 
-                        wire:click="save"
-                        @disabled(!$insideRadius)
-                        wire:loading.attr="disabled"
-                        wire:target="save"
-                        class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
-                            disabled:opacity-50 disabled:cursor-not-allowed">
-
-                        <!-- icon normal -->
-                        <span wire:loading.remove wire:target="save">
-                            <i class="ri-arrow-down-circle-fill text-3xl"></i>
-                        </span>
-
-                        <!-- spinner -->
-                        <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
-                            <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
-                        </div>
-
-                    </button>
-                    <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
-                </div>
-
             </div>
         </div>
     @elseif($showModalCheckout)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
             <div class="bg-white w-full max-w-md rounded-2xl border">
-
                 <div class="bg-primary rounded-t-2xl mb-4">
                     <h2 class="text-lg font-bold text-secondary p-2 text-white flex justify-between">
                         <div>
@@ -397,28 +402,27 @@ new class extends Component
                         </div>
                         <div>
                             <span wire:ignore class="bg-success-soft text-fg-success-strong text-sm font-bold px-1.5 py-1.5 rounded border border-emerald-200" id="clock"></span>
-                            <button wire:click="cancel" >
-                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded"><i class="ri-close-large-fill"></i></span>
+                            <button wire:click="cancel">
+                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded">
+                                    <i wire:loading.remove wire:target="cancel" class="ri-close-large-fill"></i>
+                                    <i wire:loading wire:target="cancel" class="ri-loader-4-line animate-spin"></i>
+                                </span>
                             </button>
                         </div>
                     </h2>
                 </div>
-
                 <div wire:ignore class="px-2 py-1">
                     <div id="cam" class="w-full aspect-video rounded-xl overflow-hidden  border border-emerald-500"></div>
                 </div>
-
                 @error('photo') 
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span> 
                 @enderror
                 <div class="px-2 py-1">
                     <div wire:ignore id="map" class="h-[150px] w-full rounded-xl  border border-emerald-500"></div>
                 </div>
-
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
-                
                 <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
@@ -433,7 +437,6 @@ new class extends Component
                         Mulai Izin Keluar
                     </label>
                 </div>
-
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -444,7 +447,6 @@ new class extends Component
                         <span class="text-red-500 text-sm" readonly>{{ $message }}</span> 
                     @enderror
                 </div>
-
                 <div class="grid grid-cols-3 gap-2 p-2 mt-4">
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="takeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
@@ -452,50 +454,31 @@ new class extends Component
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ambil Gambar</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="switch_camera()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-switch-fill text-3xl"></i>
-                        </button>
-                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ganti Kamera</span>
-                    </div>
-
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="retakeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-ai-2-fill text-3xl"></i>
+                            <i class="ri-camera-switch-fill text-3xl"></i>
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ulangi Gambar</span>
                     </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <button wire:click="save" @disabled(!$insideRadius) wire:loading.attr="disabled" wire:target="save" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <!-- icon normal -->
+                            <span wire:loading.remove wire:target="save">
+                                <i class="ri-arrow-down-circle-fill text-3xl"></i>
+                            </span>
+                            <!-- spinner -->
+                            <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
+                                <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
+                            </div>
+                        </button>
+                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center justify-center text-center px-2 py-2">
-                    <button 
-                        wire:click="save"
-                        @disabled(!$insideRadius)
-                        wire:loading.attr="disabled"
-                        wire:target="save"
-                        class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
-                            disabled:opacity-50 disabled:cursor-not-allowed">
-
-                        <!-- icon normal -->
-                        <span wire:loading.remove wire:target="save">
-                            <i class="ri-arrow-down-circle-fill text-3xl"></i>
-                        </span>
-
-                        <!-- spinner -->
-                        <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
-                            <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
-                        </div>
-
-                    </button>
-                    <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
-                </div>
-
             </div>
         </div>
     @elseif($showModalBusinessTrip)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
             <div class="bg-white w-full max-w-md rounded-2xl border">
-
                 <div class="bg-primary rounded-t-2xl mb-4">
                     <h2 class="text-lg font-bold text-secondary p-2 text-white flex justify-between">
                         <div>
@@ -503,29 +486,27 @@ new class extends Component
                         </div>
                         <div>
                             <span class="bg-success-soft text-fg-success-strong text-sm font-bold px-1.5 py-1.5 rounded border border-emerald-200" id="clock"></span>
-                            <button wire:click="cancel" >
-                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded"><i class="ri-close-large-fill"></i></span>
+                            <button wire:click="cancel">
+                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded">
+                                    <i wire:loading.remove wire:target="cancel" class="ri-close-large-fill"></i>
+                                    <i wire:loading wire:target="cancel" class="ri-loader-4-line animate-spin"></i>
+                                </span>
                             </button>
                         </div>
                     </h2>
                 </div>
-
                 <div wire:ignore class="px-2 py-1">
                     <div id="cam" class="w-full aspect-video rounded-xl overflow-hidden  border border-emerald-500"></div>
                 </div>
-
                 @error('photo') 
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span> 
                 @enderror
-
                 <div class="px-2 py-1">
                     <div wire:ignore id="map" class="h-[150px] w-full rounded-xl  border border-emerald-500"></div>
                 </div>
-
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
-
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -536,7 +517,6 @@ new class extends Component
                         <span class="text-red-500 text-sm" readonly>{{ $message }}</span> 
                     @enderror
                 </div>
-
                 <div class="grid grid-cols-3 gap-2 p-2 mt-4">
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="takeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
@@ -544,50 +524,31 @@ new class extends Component
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ambil Gambar</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="switch_camera()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-switch-fill text-3xl"></i>
-                        </button>
-                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ganti Kamera</span>
-                    </div>
-
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="retakeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-ai-2-fill text-3xl"></i>
+                            <i class="ri-camera-switch-fill text-3xl"></i>
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ulangi Gambar</span>
                     </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <button wire:click="save" @disabled(!$insideRadius) wire:loading.attr="disabled" wire:target="save" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <!-- icon normal -->
+                            <span wire:loading.remove wire:target="save">
+                                <i class="ri-arrow-down-circle-fill text-3xl"></i>
+                            </span>
+                            <!-- spinner -->
+                            <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
+                                <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
+                            </div>
+                        </button>
+                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center justify-center text-center px-2 py-2">
-                    <button 
-                        wire:click="save"
-                        @disabled(!$insideRadius)
-                        wire:loading.attr="disabled"
-                        wire:target="save"
-                        class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
-                            disabled:opacity-50 disabled:cursor-not-allowed">
-
-                        <!-- icon normal -->
-                        <span wire:loading.remove wire:target="save">
-                            <i class="ri-arrow-down-circle-fill text-3xl"></i>
-                        </span>
-
-                        <!-- spinner -->
-                        <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
-                            <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
-                        </div>
-
-                    </button>
-                    <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
-                </div>
-
             </div>
         </div>
     @elseif($showModalLeave)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
             <div class="bg-white w-full max-w-md rounded-2xl border">
-
                 <div class="bg-primary rounded-t-2xl mb-4">
                     <h2 class="text-lg font-bold text-secondary p-2 text-white flex justify-between">
                         <div>
@@ -595,29 +556,27 @@ new class extends Component
                         </div>
                         <div>
                             <span class="bg-success-soft text-fg-success-strong text-sm font-bold px-1.5 py-1.5 rounded border border-emerald-200" id="clock"></span>
-                            <button wire:click="cancel" >
-                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded"><i class="ri-close-large-fill"></i></span>
+                            <button wire:click="cancel">
+                                <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded">
+                                    <i wire:loading.remove wire:target="cancel" class="ri-close-large-fill"></i>
+                                    <i wire:loading wire:target="cancel" class="ri-loader-4-line animate-spin"></i>
+                                </span>
                             </button>
                         </div>
                     </h2>
                 </div>
-
                 <div wire:ignore class="px-2 py-1">
                     <div id="cam" class="w-full aspect-video rounded-xl overflow-hidden  border border-emerald-500"></div>
                 </div>
-
                 @error('photo') 
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span> 
                 @enderror
-
                 <div class="px-2 py-1">
                     <div wire:ignore id="map" class="h-[150px] w-full rounded-xl  border border-emerald-500"></div>
                 </div>
-
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
-
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -628,7 +587,6 @@ new class extends Component
                         <span class="text-red-500 text-sm" readonly>{{ $message }}</span> 
                     @enderror
                 </div>
-
                 <div class="grid grid-cols-3 gap-2 p-2 mt-4">
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="takeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
@@ -636,44 +594,26 @@ new class extends Component
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ambil Gambar</span>
                     </div>
-                    
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="switch_camera()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-switch-fill text-3xl"></i>
-                        </button>
-                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ganti Kamera</span>
-                    </div>
-
                     <div class="flex flex-col items-center justify-center text-center">
                         <button type="button" onclick="retakeSnapshot()" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10">
-                            <i class="ri-camera-ai-2-fill text-3xl"></i>
+                            <i class="ri-camera-switch-fill text-3xl"></i>
                         </button>
                         <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Ulangi Gambar</span>
                     </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <button wire:click="save" @disabled(!$insideRadius) wire:loading.attr="disabled" wire:target="save" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <!-- icon normal -->
+                            <span wire:loading.remove wire:target="save">
+                                <i class="ri-arrow-down-circle-fill text-3xl"></i>
+                            </span>
+                            <!-- spinner -->
+                            <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
+                                <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
+                            </div>
+                        </button>
+                        <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center justify-center text-center px-2 py-2">
-                    <button 
-                        wire:click="save"
-                        @disabled(!$insideRadius)
-                        wire:loading.attr="disabled"
-                        wire:target="save"
-                        class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 
-                            disabled:opacity-50 disabled:cursor-not-allowed">
-
-                        <!-- icon normal -->
-                        <span wire:loading.remove wire:target="save">
-                            <i class="ri-arrow-down-circle-fill text-3xl"></i>
-                        </span>
-
-                        <!-- spinner -->
-                        <div wire:loading.delay wire:target="save" class="flex items-center justify-center bg-neutral-secondary-soft p-1 border border-default text-fg-brand-strong text-xs font-medium rounded-base">
-                            <div class="px-2 py-px ring-1 ring-inset ring-brand-subtle text-emerald-900 text-xs font-medium rounded-sm bg-brand-softer animate-pulse">Proses...</div>
-                        </div>
-
-                    </button>
-                    <span class="text-xs md:text-sm md:font-semibold text-emerald-900">Simpan</span>
-                </div>
-
             </div>
         </div>
     @endif

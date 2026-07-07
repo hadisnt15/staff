@@ -22,6 +22,10 @@ class SalaryResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Salary';
 
+    protected static ?string $navigationLabel = 'Komponen Gaji';
+
+    protected static ?string $pluralModelLabel = 'Komponen Gaji';
+
     public static function form(Schema $schema): Schema
     {
         return SalaryForm::configure($schema);

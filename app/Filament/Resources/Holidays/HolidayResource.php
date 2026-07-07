@@ -20,6 +20,10 @@ class HolidayResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $navigationLabel = 'Hari Libur';
+
+    protected static ?string $pluralModelLabel = 'Hari Libur';
+
     public static function form(Schema $schema): Schema
     {
         return HolidayForm::configure($schema);

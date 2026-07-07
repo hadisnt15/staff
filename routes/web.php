@@ -23,6 +23,7 @@ Route::livewire('/home', 'pages::home.index')->middleware('auth')->name('home');
 Route::livewire('/salary', 'pages::salary.index')->middleware('auth')->name('salary');
 Route::livewire('/employee', 'pages::employee.index')->middleware('auth')->name('employee');
 Route::livewire('/profile', 'pages::profile.index')->middleware('auth')->name('profile');
+Route::livewire('/face-registration', 'pages::face-registration.index')->middleware('auth')->name('face-registration');
 
 Route::post('/logout', function() {
     Auth::logout();

@@ -4,6 +4,7 @@ use Livewire\Component;
 
 use App\Services\AttendanceSummaryService;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 
 new class extends Component
 {
@@ -14,6 +15,18 @@ new class extends Component
             auth()->id(),
             now()->format('Y-m')
         );
+    }
+
+    #[On('attendance-saved')]
+    public function refreshSummary()
+    {
+        unset($this->summary); 
+        $this->dispatch('refresh-chart', chartData: [
+            'workday'  => (int) $this->summary['workdayCount'],
+            'presence' => (int) $this->summary['presenceCount'],
+            'late'     => (int) $this->summary['lateCount'],
+            'leave'    => (int) $this->summary['leaveCount'],
+        ]);
     }
 
     public function render()

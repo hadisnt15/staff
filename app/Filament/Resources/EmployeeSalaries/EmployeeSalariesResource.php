@@ -25,6 +25,12 @@ class EmployeeSalariesResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Employee Salaries';
 
+    protected static ?string $navigationLabel = 'Gaji Karyawan';
+
+    protected static ?string $modelLabel = 'Employee Salary';
+
+    protected static ?string $pluralModelLabel = 'Gaji Karyawan';
+
     public static function form(Schema $schema): Schema
     {
         return EmployeeSalariesForm::configure($schema);

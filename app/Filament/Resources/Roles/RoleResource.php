@@ -41,6 +41,10 @@ class RoleResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $navigationLabel = 'Registrasi Wajah';
+
+    protected static ?string $pluralModelLabel = 'Registrasi Wajah';
+
     public static function form(Schema $schema): Schema
     {
         return $schema

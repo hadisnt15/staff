@@ -7,6 +7,7 @@ use Livewire\Attributes\Title;
 new #[Title('Halaman Utama')] class extends Component
 {
     public $title = '';
+
     public function getTitle()
     {
         return 'Slip Gaji Saya';
@@ -26,6 +27,9 @@ new #[Title('Halaman Utama')] class extends Component
                     <span class="text-fg-success-strong font-bold text-sm md:text-base"> @auth {{ auth()->user()->name }} @else Anda Belum Login @endauth</span>
                 </div>
             </div>
+
+            {{-- face reg status --}}
+            <livewire:home.face-reg-status />
 
             {{-- today log --}}
             <livewire:home.log />
