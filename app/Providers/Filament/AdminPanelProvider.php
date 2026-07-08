@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(false)
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Presensi')
+                    ->label('Halaman Utama')
                     ->icon('heroicon-o-clock')
                     ->url('/home'),
 
