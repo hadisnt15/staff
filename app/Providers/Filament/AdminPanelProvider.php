@@ -31,7 +31,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Kelola Karyawan')
+            ->brandName('Staff KKJ')
+            ->favicon(asset('staff-kkj.png'))
             ->login()
             ->authGuard('web')
             ->colors([

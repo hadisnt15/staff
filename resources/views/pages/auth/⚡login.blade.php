@@ -5,7 +5,7 @@ use Livewire\Attributes\Title;
 
 new #[Title('Masuk')] class extends Component
 {
-    public $email;
+    public $username;
     public $password;
 
     // public function title(): string
@@ -16,7 +16,7 @@ new #[Title('Masuk')] class extends Component
     public function login()
     {
         $credentials = [
-            'email' => $this->email,
+            'username' => $this->username,
             'password' => $this->password,
         ];
 
@@ -27,7 +27,7 @@ new #[Title('Masuk')] class extends Component
             return redirect('/home');
         }
 
-        $this->addError('email', 'Email atau password salah');
+        $this->addError('username', 'Email atau password salah');
     }
 };
 ?>
@@ -62,11 +62,11 @@ new #[Title('Masuk')] class extends Component
             </div>
             <form wire:submit.prevent="login" class="space-y-5 mt-8">
                 <div>
-                    <label class="text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" wire:model="email" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <label class="text-sm font-medium text-gray-700">Nama Pengguna</label>
+                    <input type="text" wire:model="username" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-gray-700">Password</label>
+                    <label class="text-sm font-medium text-gray-700">Kata Sandi</label>
                     <input type="password" wire:model="password" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <button class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold transition">Masuk</button>
