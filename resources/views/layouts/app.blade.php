@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{ $title . ' - ' . config('app.name') ?? config('app.name') }}</title>
+        <title>{{ config('app.name') }}{{ isset($title) ? ' - ' . $title : '' }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/attendance-chart2.js'])
         
