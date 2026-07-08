@@ -8,10 +8,9 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/attendance-chart2.js'])
         
-
+        <link rel="icon" type="image/x-icon" href="{{ asset('staff-kkj.png') }}">
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
-
-         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
         @livewireStyles
     </head>
