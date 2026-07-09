@@ -22,13 +22,9 @@ class UsersTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('username')
-                    ->label('Username')
+                    ->label('Nama Pengguna')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('email')
-                    ->label('Email')
-                    ->placeholder('-')
-                    ->searchable(),
                 TextColumn::make('phone')
                     ->label('No. HP')
                     ->searchable(),
