@@ -69,4 +69,14 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(FaceRegistration::class);
     }
+    
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function getTimezoneAttribute(): string
+    {
+        return $this->branch?->timezone ?? config('app.timezone');
+    }
 }

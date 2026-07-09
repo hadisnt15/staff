@@ -6,6 +6,10 @@
 
         <title>{{ config('app.name') }}{{ isset($title) ? ' - ' . $title : '' }}</title>
 
+        <script>
+            const branchTimezone = "{{ auth()->user()->branch->timezone }}";
+        </script>
+
         @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/attendance-chart2.js'])
         
         <link rel="icon" type="image/x-icon" href="{{ asset('staff-kkj.png') }}">

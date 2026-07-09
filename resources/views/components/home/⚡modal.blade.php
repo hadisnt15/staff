@@ -265,10 +265,10 @@ new class extends Component
             );
             return;
         }
-
+        
         Attendance::create([
             'user_id' => auth()->id(),
-            'attendance_datetime' => now(),
+            'attendance_datetime' => now(auth()->user()->timezone),
             'attendance_break' => $break,
             'attendance_permission' => $permission,
             'attendance_type' => $this->type,
@@ -634,7 +634,10 @@ new class extends Component
     });
 
     function updateClock() {
-        const now = new Date();
+        // const now = new Date();
+        const now = new Date(new Date().toLocaleString("en-US", {
+            timeZone: branchTimezone
+        }));
 
         const day = now.getDate();
         const month = now.getMonth() + 1;

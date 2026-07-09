@@ -17,12 +17,33 @@ class UsersTable
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('email'),
-                TextColumn::make('roles.name')
+                TextColumn::make('name')
+                    ->label('Nama')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('username')
+                    ->label('Username')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->placeholder('-')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->label('No. HP')
+                    ->searchable(),
+                TextColumn::make('branch.name')
+                    ->label('Cabang')
                     ->badge()
-                    ->separator(','),
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->badge()
+                    ->separator(',')
+                    ->sortable(),
             ])
+            ->defaultSort('name')
             ->filters([
                 TrashedFilter::make(),
             ])

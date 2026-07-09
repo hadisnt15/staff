@@ -60,7 +60,10 @@ new #[Title('Halaman Utama')] class extends Component
 </div>
 <script>
     function updateClock() {
-        const now = new Date();
+        // const now = new Date();
+        const now = new Date(new Date().toLocaleString("en-US", {
+            timeZone: branchTimezone
+        }));
 
         const date = now.toLocaleDateString('id-ID', {
             weekday: 'long',

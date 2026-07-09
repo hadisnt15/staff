@@ -27,7 +27,7 @@ new #[Title('Masuk')] class extends Component
             return redirect('/home');
         }
 
-        $this->addError('username', 'Email atau password salah');
+        $this->addError('login', 'Nama Pengguna atau Kata Sandi Tidak Sesuai');
     }
 };
 ?>
@@ -60,6 +60,7 @@ new #[Title('Masuk')] class extends Component
                     <p class="text-xs mt-2">Monitoring</p>
                 </div>
             </div>
+            
             <form wire:submit.prevent="login" class="space-y-5 mt-8">
                 <div>
                     <label class="text-sm font-medium text-gray-700">Nama Pengguna</label>
@@ -70,6 +71,11 @@ new #[Title('Masuk')] class extends Component
                     <input type="password" wire:model="password" class="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <button class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-semibold transition">Masuk</button>
+                @if ($errors->has('login'))
+                    <div class="px-1 py-1 text-sm text-red-700">
+                        {{ $errors->first('login') }}
+                    </div>
+                @endif
             </form>
             <div class="mt-8 text-center">
                 <div class="flex justify-center gap-2 text-xs">
