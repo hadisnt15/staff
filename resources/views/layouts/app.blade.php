@@ -7,7 +7,7 @@
         <title>{{ config('app.name') }}{{ isset($title) ? ' - ' . $title : '' }}</title>
 
         <script>
-            const branchTimezone = "{{ auth()->user()->branch->timezone }}";
+            const branchTimezone = "{{ auth()->user()?->branch?->timezone ?? config('app.timezone') }}";
         </script>
 
         @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/attendance-chart2.js'])
