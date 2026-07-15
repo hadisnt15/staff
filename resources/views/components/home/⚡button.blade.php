@@ -4,19 +4,16 @@ use Livewire\Component;
 
 use App\Services\AttendanceService;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 
 new class extends Component
 {
+    public array $buttons = [];
+
     #[Computed]
     public function todayLog()
     {
         return AttendanceService::getTodayLog(auth()->id());
-    }
-    
-    #[Computed]
-    public function buttons()
-    {
-        return AttendanceService::getButtonState($this->todayLog, auth()->user());
     }
 
     public function openCheckinModal()
@@ -39,10 +36,25 @@ new class extends Component
         $this->dispatch('openLeaveModal');
     }
 
+    public function mount()
+    {
+        $this->refreshButtons();
+    }
+
+    public function refreshButtons()
+    {
+        $todayLog = AttendanceService::getTodayLog(auth()->id());
+
+        $this->buttons = AttendanceService::getButtonState(
+            $todayLog,
+            auth()->user()
+        );
+    }
+
     #[On('attendance-saved')]
     public function loadButtons()
     {
-        $this->buttons = AttendanceService::buttonState(auth()->user());
+        $this->refreshButtons();
     }
 };
 ?>

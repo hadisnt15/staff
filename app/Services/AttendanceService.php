@@ -31,11 +31,16 @@ class AttendanceService
     {
         $isCheckoutFinal = $log && $log->attendance_type === 'absen_keluar' && !$log->attendance_break && !$log->attendance_permission;
         $isAbsensce = $log && $log->attendance_type === 'tidak_hadir';
+        $isBusinessTrip = $log && $log->attendance_type === 'luar_kota';
+
         return [
-            'checkin' => $isAbsensce || $isCheckoutFinal || $log?->attendance_type === 'absen_masuk',
-            'checkout' => $isAbsensce || $isCheckoutFinal || !$log || $log?->attendance_type === 'absen_keluar',
-            'businessTrip' => $isAbsensce || $isCheckoutFinal || !$user->hasAnyRole(['driver', 'salesman']),
-            'leave' => $isAbsensce || $isCheckoutFinal || (bool)$log,
+            'checkin' => $isAbsensce || $isBusinessTrip || $isCheckoutFinal || $log?->attendance_type === 'absen_masuk',
+
+            'checkout' => $isAbsensce || $isBusinessTrip || $isCheckoutFinal || !$log || $log?->attendance_type === 'absen_keluar',
+
+            'businessTrip' => $isAbsensce || $isBusinessTrip || $isCheckoutFinal || !$user->hasAnyRole(['driver', 'salesman']),
+
+            'leave' => $isAbsensce || $isBusinessTrip || $isCheckoutFinal || (bool)$log,
         ];
     }
 

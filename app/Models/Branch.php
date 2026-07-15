@@ -11,7 +11,14 @@ class Branch extends Model
         'code',
         'name',
         'is_active',
-        'timezone'
+        'timezone',
+        'work_start_time',
+        'work_end_time',
+        'work_end_time_weekend',
+        'break_start_time',
+        'break_end_time',
+        'lat',
+        'lng'
     ];
 
     public function user()

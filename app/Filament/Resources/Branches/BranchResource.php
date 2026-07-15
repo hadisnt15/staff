@@ -10,12 +10,14 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Toggle;
 
 class BranchResource extends Resource
 {
@@ -43,6 +45,12 @@ class BranchResource extends Resource
                     ->label('Nama')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('lat')
+                    ->numeric()
+                    ->step('any'),
+                TextInput::make('lng')
+                    ->numeric()
+                    ->step('any'),
                 TextInput::make('timezone')
                     ->label('Zona Waktu')
                     ->required()
@@ -50,7 +58,35 @@ class BranchResource extends Resource
                 Toggle::make('is_active')
                     ->label('Aktif')
                     ->onColor('primary')
-                    ->offColor('gray')
+                    ->offColor('gray'),
+                Section::make('Jam Kerja')
+                    ->icon('heroicon-o-clock')
+                    ->columns(2)
+                    ->schema([
+                        TimePicker::make('work_start_time')
+                            ->label('Jam Masuk')
+                            ->seconds(false)
+                            ->native(false)
+                            ->required(),
+                        TimePicker::make('work_end_time')
+                            ->label('Jam Pulang')
+                            ->seconds(false)
+                            ->native(false)
+                            ->required(),
+                        TimePicker::make('break_start_time')
+                            ->label('Jam Mulai Istirahat')
+                            ->seconds(false)
+                            ->native(false),
+                        TimePicker::make('break_end_time')
+                            ->label('Jam Selesai Istirahat')
+                            ->seconds(false)
+                            ->native(false),
+                        TimePicker::make('work_end_time_weekend')
+                            ->label('Jam Pulang (Sabtu)')
+                            ->seconds(false)
+                            ->native(false),
+                    ])
+                    ->columnSpanFull()  
             ]);
     }
 
@@ -64,6 +100,12 @@ class BranchResource extends Resource
                     ->searchable(),
                 TextColumn::make('name')
                     ->label('Nama')
+                    ->searchable(),
+                TextColumn::make('lat')
+                    ->label('Latitude')
+                    ->searchable(),
+                TextColumn::make('lng')
+                    ->label('Longitude')
                     ->searchable(),
                 TextColumn::make('timezone')
                     ->label('Zona Waktu')

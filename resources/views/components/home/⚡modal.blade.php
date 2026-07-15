@@ -21,8 +21,10 @@ new class extends Component
     public $showModalBusinessTrip = false;
     public $showModalLeave = false;
     public $photoUploaded = false;
-    public $officeLat = -3.3579102791671946;
-    public $officeLng = 114.63293744171641;
+    // public $officeLat = -3.3579102791671946;
+    // public $officeLng = 114.63293744171641;
+    public $officeLat;
+    public $officeLng;
     public $allowedRadius = 30; // meter
     public $insideRadius = false;
 
@@ -94,6 +96,11 @@ new class extends Component
 
     public function mount()
     {
+        $branch = auth()->user()->branch;
+
+        $this->officeLat = (float) $branch->lat;
+        $this->officeLng = (float) $branch->lng;
+
         $userId = auth()->id();
 
         $last = Attendance::where('user_id', $userId)
@@ -618,7 +625,9 @@ new class extends Component
         </div>
     @endif
 </div>
-
+<script>
+    
+</script>
 <script>
     let currentCamera = 'user';
     document.addEventListener('livewire:init', () => {
@@ -678,6 +687,16 @@ new class extends Component
 
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
+                    const accuracy = position.coords.accuracy;
+
+                    // if (accuracy > 20) {
+                    //     alert(
+                    //         "GPS belum akurat (" +
+                    //         Math.round(accuracy) +
+                    //         " meter).\nSilakan tunggu beberapa detik lalu coba lagi."
+                    //     );
+                    //     return;
+                    // }
 
                     @this.set('lat', lat);
                     @this.set('lng', lng);
@@ -691,8 +710,12 @@ new class extends Component
 
                     L.marker([lat, lng]).addTo(map);
 
-                    const officeLat = -3.3579102791671946;
-                    const officeLng = 114.63293744171641;
+                    // const officeLat = -3.3579102791671946;
+                    // const officeLng = 114.63293744171641;
+                    const officeLat = Number(@js($officeLat));
+                    const officeLng = Number(@js($officeLng));
+
+                    console.log(officeLat, officeLng, typeof officeLat);
 
                     const distance = calculateDistance(
                         lat, lng, officeLat, officeLng
@@ -725,6 +748,12 @@ new class extends Component
 
                 function() {
                     alert("Izinkan akses lokasi untuk absen.");
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
                 }
             );
         }
