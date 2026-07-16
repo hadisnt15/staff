@@ -16,12 +16,12 @@ new class extends Component
             </button>
         </div>
             <div x-show="showRule" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style="display: none;">
-            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
                 <div class="flex items-center justify-between border-b px-6 py-4">
                     <h2 class="text-lg font-semibold">Panduan Penggunaan</h2>
                     <button @click="showRule = false" class="text-gray-500 hover:text-black text-xl">✕</button>
                 </div>
-                <div class="p-4 max-h-[80vh] overflow-y-auto text-sm space-y-5">
+                <div class="p-4 overflow-y-auto text-sm space-y-5">
                     <div>
                         <h3 class="font-semibold mb-1">Prasyarat</h3>
                         <p class="px-1">
