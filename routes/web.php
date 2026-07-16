@@ -3,32 +3,37 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/userLogin');
+Route::redirect('/', '/userLogin');
+
+Route::middleware('guest')->group(function () {
+    Route::livewire('/userLogin', 'pages::auth.login')
+        ->name('login');
 });
 
-Route::livewire('/userLogin', 'pages::auth.login')->middleware('guest')->name('login');
-Route::get('/admin/login', function () {
-    return redirect()->route('login');
-})->name('filament.admin.auth.login');
+Route::redirect('/admin/login', '/userLogin')
+    ->name('filament.admin.auth.login');
 
-// Route::get('/logout', function () {
-//     Auth::logout();
-//     request()->session()->invalidate();
-//     request()->session()->regenerateToken();
-//     return redirect('/userLogin');
-// });
+Route::middleware('auth')->group(function () {
 
-Route::livewire('/home', 'pages::home.index')->middleware('auth')->name('home');
-Route::livewire('/salary', 'pages::salary.index')->middleware('auth')->name('salary');
-Route::livewire('/employee', 'pages::employee.index')->middleware('auth')->name('employee');
-Route::livewire('/profile', 'pages::profile.index')->middleware('auth')->name('profile');
-Route::livewire('/face-registration', 'pages::face-registration.index')->middleware('auth')->name('face-registration');
-Route::livewire('/leave-plan', 'pages::leave-plan.index')->middleware('auth')->name('leave-plan');
+    // Halaman umum
+    Route::livewire('/home', 'pages::home.index')->name('home');
+    Route::livewire('/salary', 'pages::salary.index')->name('salary');
+    Route::livewire('/profile', 'pages::profile.index')->name('profile');
+    Route::livewire('/face-registration', 'pages::face-registration.index')->name('face-registration');
+    Route::livewire('/leave-plan', 'pages::leave-plan.index')->name('leave-plan');
 
-Route::post('/logout', function() {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/userLogin');
-})->name('logout');
+    // Khusus Super Admin & Manager
+    Route::middleware('role:super_admin|manager')->group(function () {
+        Route::livewire('/employee', 'pages::employee.index')
+            ->name('employee');
+    });
+
+    Route::post('/logout', function () {
+        Auth::logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('login');
+    })->name('logout');
+});

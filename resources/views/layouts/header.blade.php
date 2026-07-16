@@ -25,7 +25,7 @@
                         <div class="hidden z-50 my-4 w-56 text-base list-none bg-gradient-to-br from-emerald-600 to-emerald-900 rounded divide-y divide-gray-100 shadow rounded-xl" id="dropdown">
                             <div class="py-3 px-4">
                                 <span class="block text-sm font-semibold text-gray-100">{{ auth()->user()->name }}</span>
-                                <span class="block text-sm text-gray-100 truncate">{{ auth()->user()->email }}</span>
+                                <span class="block text-sm text-gray-100 truncate">{{ auth()->user()->username }}</span>
                             </div>
                             <ul class="py-1 text-gray-100" aria-labelledby="dropdown">
                                 {{-- superadmin-menu --}}
