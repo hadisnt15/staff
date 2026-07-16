@@ -24,6 +24,7 @@ Route::livewire('/salary', 'pages::salary.index')->middleware('auth')->name('sal
 Route::livewire('/employee', 'pages::employee.index')->middleware('auth')->name('employee');
 Route::livewire('/profile', 'pages::profile.index')->middleware('auth')->name('profile');
 Route::livewire('/face-registration', 'pages::face-registration.index')->middleware('auth')->name('face-registration');
+Route::livewire('/leave-plan', 'pages::leave-plan.index')->middleware('auth')->name('leave-plan');
 
 Route::post('/logout', function() {
     Auth::logout();

@@ -153,6 +153,22 @@ new class extends Component
         }
         
         $this->validate();
+        if (
+            in_array($this->type, ['absen_masuk', 'absen_keluar']) &&
+            $this->mode === 'permission' &&
+            blank($this->note)
+        ) {
+            $this->addError('note', 'Keterangan wajib diisi saat melakukan izin.');
+            return;
+        }
+
+        if (
+            in_array($this->type, ['luar_kota', 'tidak_hadir']) &&
+            blank($this->note)
+        ) {
+            $this->addError('note', 'Keterangan wajib diisi.');
+            return;
+        }
 
         $distance = $this->calculateDistance(
             $this->lat,
@@ -346,6 +362,9 @@ new class extends Component
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
+                @error('note')
+                    <span class="text-red-500 text-sm px-2">{{ $message }}</span>
+                @enderror
                 <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
@@ -430,6 +449,9 @@ new class extends Component
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
+                @error('note')
+                    <span class="text-red-500 text-sm px-2">{{ $message }}</span>
+                @enderror
                 <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
@@ -514,6 +536,9 @@ new class extends Component
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
+                @error('note')
+                    <span class="text-red-500 text-sm px-2">{{ $message }}</span>
+                @enderror
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -584,6 +609,9 @@ new class extends Component
                 <div class="px-2 py-1">
                     <textarea wire:model="note" class="w-full  border border-emerald-500 rounded-xl" placeholder="Catatan (opsional)"></textarea>
                 </div>
+                @error('note')
+                    <span class="text-red-500 text-sm px-2">{{ $message }}</span>
+                @enderror
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 

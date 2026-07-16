@@ -79,4 +79,14 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->branch?->timezone ?? config('app.timezone');
     }
+
+    public function leavePlans()
+    {
+        return $this->hasMany(LeavePlan::class);
+    }
+
+    public function approvedLeavePlans()
+    {
+        return $this->hasMany(LeavePlan::class, 'approved_by');
+    }
 }

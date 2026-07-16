@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 new #[Title('Profil Saya')] class extends Component
 {
     public $name;
-    public $email;
+    public $username;
 
     public $current_password;
     public $new_password;
@@ -16,20 +16,36 @@ new #[Title('Profil Saya')] class extends Component
     public function mount()
     {
         $this->name = auth()->user()->name;
-        $this->email = auth()->user()->email;
+        $this->username = auth()->user()->username;
     }
 
     // 🔥 update profile
     public function updateProfile()
     {
         $this->validate([
-            'name' => 'required|min:3',
-            'email' => 'required|email'
+            'name' => 'required|string|min:4|max:50',
+            'username' => [
+                'required',
+                'string',
+                'unique:users,username,' . auth()->id(),
+                'regex:/^[A-Za-z0-9_]+$/',
+                'min:4',
+                'max:20',
+            ]
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'name.min' => 'Nama minimal 4 karakter.',
+            'name.max' => 'Nama maksimal 50 karakter.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username sudah digunakan.',
+            'username.regex' => 'Username hanya boleh berisi huruf, angka, dan underscore (_).',
+            'username.min' => 'Username minimal 4 karakter.',
+            'username.max' => 'Username maksimal 20 karakter.',
         ]);
 
         auth()->user()->update([
             'name' => $this->name,
-            'email' => $this->email
+            'username' => $this->username
         ]);
 
         session()->flash('success', 'Profil berhasil diperbarui');
@@ -40,7 +56,12 @@ new #[Title('Profil Saya')] class extends Component
     {
         $this->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|same:new_password_confirmation',
+            'new_password' => 'required|min:8|same:new_password_confirmation',
+        ], [
+            'current_password.required' => 'Kata sandi saat ini wajib diisi.',
+            'new_password.required' => 'Kata sandi baru wajib diisi.',
+            'new_password.min' => 'Kata sandi baru minimal 6 karakter.',
+            'new_password.same' => 'Konfirmasi kata sandi baru tidak cocok.',
         ]);
 
         if (!Hash::check($this->current_password, auth()->user()->password)) {
@@ -100,13 +121,13 @@ new #[Title('Profil Saya')] class extends Component
                     </div>
     
                     <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" wire:model="email" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring focus:ring-emerald-200 w-full p-2.5">
-                        @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <label class="block mb-2 text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" wire:model="username" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring focus:ring-emerald-200 w-full p-2.5">
+                        @error('username') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                     </div>
     
-                    <button class="w-full bg-emerald-800 hover:bg-emerald-600 font-medium text-white rounded-lg text-sm px-5 py-2.5 text-center">
-                        Simpan Profil
+                    <button type="submit" wire:loading.attr="disabled" class="w-full bg-emerald-800 hover:bg-emerald-600 font-medium text-white rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-60">
+                        <i wire:loading wire:target="updateProfile" class="ri-loader-4-line animate-spin"></i> Simpan Profil
                     </button>
                 </form>
             </div>
@@ -131,8 +152,11 @@ new #[Title('Profil Saya')] class extends Component
                         <input type="password" wire:model="new_password_confirmation" class="bg-gray-50 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring focus:ring-emerald-200 w-full p-2.5">
                     </div>
     
-                    <button class="w-full bg-emerald-800 hover:bg-emerald-600 font-medium text-white rounded-lg text-sm px-5 py-2.5 text-center">
+                    {{-- <button class="w-full bg-emerald-800 hover:bg-emerald-600 font-medium text-white rounded-lg text-sm px-5 py-2.5 text-center">
                         Simpan Password
+                    </button> --}}
+                    <button type="submit" wire:loading.attr="disabled" class="w-full bg-emerald-800 hover:bg-emerald-600 font-medium text-white rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-60">
+                        <i wire:loading wire:target="updatePassword" class="ri-loader-4-line animate-spin"></i> Simpan Password
                     </button>
                 </form>
             </div>

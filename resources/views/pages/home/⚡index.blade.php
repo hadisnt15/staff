@@ -26,6 +26,7 @@ new #[Title('Halaman Utama')] class extends Component
                 <div>
                     <span class="text-fg-success-strong font-bold text-sm md:text-base"> @auth {{ auth()->user()->name }} @else Anda Belum Login @endauth</span>
                 </div>
+                <livewire:home.rule />
             </div>
 
             {{-- face reg status --}}

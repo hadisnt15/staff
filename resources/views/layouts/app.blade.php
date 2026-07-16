@@ -16,6 +16,8 @@
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
         @livewireStyles
     </head>
     <body>
@@ -42,8 +44,8 @@
             document.addEventListener('livewire:navigated', initAll);
         </script>
 
-         <!-- Make sure you put this AFTER Leaflet's CSS -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        
     </body>
 </html>

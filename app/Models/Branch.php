@@ -21,6 +21,14 @@ class Branch extends Model
         'lng'
     ];
 
+    protected $casts = [
+        'work_start_time' => 'datetime:H:i:s',
+        'work_end_time' => 'datetime:H:i:s',
+        'work_end_time_weekend' => 'datetime:H:i:s',
+        'break_start_time' => 'datetime:H:i:s',
+        'break_end_time' => 'datetime:H:i:s',
+    ];
+
     public function user()
     {
         return $this->hasMany(User::class);

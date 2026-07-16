@@ -1,4 +1,5 @@
 ALTER VIEW vattendance_summaries AS 
+
 SELECT
 	T0.id_pengguna, 
 	T0.nama_pengguna, 
@@ -85,8 +86,8 @@ FROM (
 			T0.ket_tidak_hadir,
 		
 			CASE
-		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang < 1 THEN 4
-		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang = 1 THEN 5
+		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang = 0 THEN 5
+		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang BETWEEN 0.5 AND 1 THEN 4
 				WHEN T0.ket_tidak_hadir IS NOT NULL THEN 6
 				WHEN T0.jam_datang IS NULL AND T0.jam_pulang IS NULL THEN 7
 				ELSE (T0.poin_datang + T0.poin_pulang + T0.poin_istirahat + T0.poin_izin)
@@ -202,9 +203,9 @@ FROM (
 						MIN(CASE WHEN T0.attendance_type = 'absen_keluar' AND T0.attendance_permission = 1 THEN TIME(T0.attendance_datetime) END) AS jam_mulai_izin,
 						MAX(CASE WHEN T0.attendance_type = 'absen_masuk' AND T0.attendance_permission = 1 THEN TIME(T0.attendance_datetime) END) AS jam_selesai_izin,
 						MAX(CASE WHEN T0.attendance_type = 'luar_kota' THEN TIME(T0.attendance_datetime) END) AS luar_kota,
-						MAX(CASE WHEN T0.attendance_type = 'luar_kota' THEN T0.attendance_note END) AS ket_luar_kota,
+						MAX(CASE WHEN T0.attendance_type = 'luar_kota' THEN CONCAT('[',T0.attendance_note,']') END) AS ket_luar_kota,
 						MAX(CASE WHEN T0.attendance_type = 'tidak_hadir' THEN TIME(T0.attendance_datetime) END) AS tidak_hadir,
-						MAX(CASE WHEN T0.attendance_type = 'tidak_hadir' THEN T0.attendance_note END) AS ket_tidak_hadir
+						MAX(CASE WHEN T0.attendance_type = 'tidak_hadir' THEN CONCAT('[',T0.attendance_note,']') END) AS ket_tidak_hadir
 					FROM attendances T0
 					JOIN users T1 ON T1.id = T0.user_id
 					JOIN branches T2 ON T2.id = T1.branch_id
@@ -214,3 +215,4 @@ FROM (
 		) T0
 	) T0
 ) T0
+WHERE T0.tanggal = '2026-03-18'
