@@ -57,6 +57,16 @@ class AttendanceSummaryService
         $holidayCountEnd = Holiday::whereBetween('holiday_date', [$start, $end])->count();
         $holidayCountNow = Holiday::whereBetween('holiday_date', [$start, $now])->count();
 
+        $holidayCountEnd += Carbon::parse($start)->diffInDaysFiltered(
+            fn (Carbon $date) => $date->isSunday(),
+            Carbon::parse($end)
+        );
+
+        $holidayCountNow += Carbon::parse($start)->diffInDaysFiltered(
+            fn (Carbon $date) => $date->isSunday(),
+            Carbon::parse($now)
+        );
+
         $dayCount = collect(CarbonPeriod::create($start, $end))->count();
         $dayCountNow = collect(CarbonPeriod::create($start, $endOrNow))->count();
 

@@ -45,10 +45,10 @@ class AttendanceService
         $hour = now()->hour;
 
         return match (true) {
-            $hour < 12 => 'Selamat Pagi',
-            $hour < 15 => 'Selamat Siang',
-            $hour < 18 => 'Selamat Sore',
-            default => 'Selamat Pagi',
+            $hour >= 4 && $hour < 11 => 'Selamat Pagi',
+            $hour >= 11 && $hour < 15 => 'Selamat Siang',
+            $hour >= 15 && $hour < 18 => 'Selamat Sore',
+            default => 'Selamat Malam',
         };
     }
     

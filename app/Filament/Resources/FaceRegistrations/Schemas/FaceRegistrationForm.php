@@ -92,7 +92,7 @@ class FaceRegistrationForm
 
 
                         \Filament\Actions\Action::make('approve')
-                            ->label('Approve Wajah')
+                            ->label('Setujui Registrasi Wajah')
                             ->color('success')
                             ->requiresConfirmation()
                             ->action(function ($record) {
