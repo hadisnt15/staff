@@ -21,12 +21,12 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/profile', 'pages::profile.index')->name('profile');
     Route::livewire('/face-registration', 'pages::face-registration.index')->name('face-registration');
     Route::livewire('/leave-plan', 'pages::leave-plan.index')->name('leave-plan');
+    Route::livewire('/employee', 'pages::employee.index')->name('employee');
 
     // Khusus Super Admin & Manager
-    Route::middleware('role:super_admin|manager')->group(function () {
-        Route::livewire('/employee', 'pages::employee.index')
-            ->name('employee');
-    });
+    // Route::middleware('role:super_admin|manager')->group(function () {
+    //     Route::livewire('/employee', 'pages::employee.index')->name('employee');
+    // });
 
     Route::post('/logout', function () {
         Auth::logout();
