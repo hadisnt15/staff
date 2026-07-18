@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use Livewire\Attributes\Title;
+use App\Models\UserSession;
 
 new #[Title('Masuk')] class extends Component
 {
@@ -24,6 +25,26 @@ new #[Title('Masuk')] class extends Component
 
             session()->regenerate();
 
+            $sessionId = session()->getId();
+            UserSession::where('user_id', Auth::id())
+                ->where('session_id', '!=', $sessionId)
+                ->update([
+                    'is_active' => false,
+                    'disconnected_at' => now(),
+                ]);
+            UserSession::updateOrCreate(
+                [
+                    'session_id' => $sessionId,
+                ],
+                [
+                    'user_id' => Auth::id(),
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->userAgent(),
+                    'last_activity' => now(),
+                    'is_active' => true,
+                ]
+            );
+
             return redirect('/home');
         }
 
@@ -33,6 +54,16 @@ new #[Title('Masuk')] class extends Component
 ?>
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 flex items-center justify-center px-4">
+    @if(session('forced_logout') === 'admin')
+        <script>
+            alert('Sesi Anda telah diputus.');
+        </script>
+    @endif
+    @if(session('forced_logout') === 'other_device')
+        <script>
+            alert('Akun Anda telah digunakan di perangkat lain.');
+        </script>
+    @endif
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
         <div class="absolute bottom-0 right-0 w-[450px] h-[450px] rounded-full bg-emerald-400/10 blur-3xl"></div>

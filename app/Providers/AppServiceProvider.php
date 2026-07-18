@@ -4,6 +4,9 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\TrackUserLogin;
 
 class AppServiceProvider extends ServiceProvider
 {

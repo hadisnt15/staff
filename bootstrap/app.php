@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\CheckActiveSession;
+use App\Http\Middleware\TrackUserSession;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            // 'active.session' => CheckActiveSession::class,
+        ]);
+        $middleware->web(append: [
+            CheckActiveSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
