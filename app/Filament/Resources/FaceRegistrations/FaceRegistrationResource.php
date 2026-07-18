@@ -28,6 +28,8 @@ class FaceRegistrationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Registrasi Wajah';
 
+    protected static ?int $navigationSort = 3;
+
     public static function form(Schema $schema): Schema
     {
         return FaceRegistrationForm::configure($schema);

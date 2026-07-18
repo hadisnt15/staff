@@ -14,31 +14,26 @@ new class extends Component
     }
 };
 ?>
-
-<div>
-    <div wire:ignore id="default-carousel" class="relative w-full overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-br from-white to-emerald-50 shadow-lg shadow-emerald-100 md:mt-4 mt-2"
-    data-carousel="slide">
+<div x-data="{ show: false, title: '', content: '' }">
+    <div id="default-carousel" wire:ignore class="relative w-full overflow-hidden rounded-2xl border border-emerald-200 bg-gradient-to-br from-white to-emerald-50 shadow-lg shadow-emerald-100 mt-4" data-carousel="slide">
         {{-- Carousel --}}
         <div class="relative h-32 overflow-hidden">
-            @forelse ($this->announcements as $announcement)
-                <div class="hidden duration-500 ease-in-out px-5 py-4" data-carousel-item>
-                    {{-- Badge --}}
-                    <div class="mb-2 inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        <i class="ri-notification-3-fill mr-1"></i> Informasi
+            @forelse ($this->announcements as $index => $announcement)
+                <div data-carousel-item="{{ $index == 0 ? 'active' : '' }}" @click=" title = @js($announcement->announcement_title); content = @js($announcement->announcement_content); show = true; " class="{{ $index == 0 ? '' : 'hidden' }} cursor-pointer duration-500 ease-in-out px-5 py-4">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="inline-flex shrink-0 items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                            <i class="ri-notification-3-fill"></i>
+                        </div>
+                        <h5 class="line-clamp-1 text-base font-semibold text-gray-800">{{ $announcement->announcement_title }}</h5>
                     </div>
-                    {{-- Title --}}
-                    <h5 class="text-base text-center font-bold text-gray-800 line-clamp-1">
-                        {{ $announcement->announcement_title }}
-                    </h5>
-                    {{-- Divider --}}
                     <div class="my-2 h-px bg-emerald-100"></div>
-                    {{-- Content --}}
-                    <p class="text-sm leading-relaxed text-gray-600 line-clamp-2">
-                        {{ $announcement->announcement_content }}
+                    <p class="line-clamp-2 text-sm leading-relaxed text-gray-600">
+                        {{ Str::limit($announcement->announcement_content, 120) }}
                     </p>
+                    
                 </div>
             @empty
-                <div class="hidden duration-500 ease-in-out px-5 py-4" data-carousel-item>
+                <div data-carousel-item="active" class="px-5 py-4">
                     <div class="flex h-full flex-col items-center justify-center text-center">
                         <div class="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
                             <i class="ri-information-fill text-xl text-emerald-600"></i>
@@ -51,24 +46,24 @@ new class extends Component
         </div>
 
         {{-- Indicator --}}
-        <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
-            @foreach ($this->announcements as $index => $announcement)
-                <button type="button" data-carousel-slide-to="{{ $index }}" class="h-2 rounded-full transition-all duration-300 {{ $index == 0 ? 'w-6 bg-emerald-600' : 'w-2 bg-emerald-200 hover:bg-emerald-400' }}"></button>
-            @endforeach
+        @if($this->announcements->count() > 1)
+            <div class="absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 gap-2">
+                @foreach ($this->announcements as $index => $announcement)
+                    <button type="button" data-carousel-slide-to="{{ $index }}" aria-label="Slide {{ $index + 1 }}" class="h-2 w-2 rounded-full bg-emerald-300"></button>
+                @endforeach
+            </div>
+        @endif
+        
+    </div>
+    <div x-cloak x-show="show" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div @click.outside="show = false" class="w-full max-w-2xl rounded-xl bg-white shadow-xl mx-4">
+            <div class="flex items-center justify-between border-b px-6 py-4">
+                <h2 class="text-lg font-semibold" x-text="title"></h2>
+                <button @click="show = false" class="text-xl text-gray-500 hover:text-black">✕</button>
+            </div>
+            <div class="max-h-[70vh] overflow-y-auto p-6">
+                <p class="whitespace-pre-line text-gray-700" x-text="content"></p>
+            </div>
         </div>
-
-        {{-- Previous --}}
-        <button type="button" class="absolute left-2 top-1/2 -translate-y-1/2" data-carousel-prev>
-            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow border border-emerald-100 transition hover:bg-emerald-50">
-                <i class="ri-arrow-left-s-line text-xl text-emerald-700"></i>
-            </div>
-        </button>
-
-        {{-- Next --}}
-        <button type="button" class="absolute right-2 top-1/2 -translate-y-1/2" data-carousel-next>
-            <div class="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow border border-emerald-100 transition hover:bg-emerald-50">
-                <i class="ri-arrow-right-s-line text-xl text-emerald-700"></i>
-            </div>
-        </button>
     </div>
 </div>

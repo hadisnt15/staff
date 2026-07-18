@@ -26,6 +26,8 @@ class SalaryResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Komponen Gaji';
 
+    protected static ?int $navigationSort = 6;
+
     public static function form(Schema $schema): Schema
     {
         return SalaryForm::configure($schema);

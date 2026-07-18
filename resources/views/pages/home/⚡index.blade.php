@@ -36,7 +36,7 @@ new #[Title('Halaman Utama')] class extends Component
             <livewire:home.log />
 
             <div class="px-2 py-1">
-                <span wire:ignore class="font-semibold md:font-bold text-md tracking-tight text-fg-success-strong">Rekap Presensi {{ now()->translatedFormat('F Y') }}</span>
+                <span wire:ignore class="font-semibold md:font-bold text-sm tracking-tight text-fg-success-strong">Rekap Presensi {{ now()->translatedFormat('F Y') }}</span>
             </div>
             <div class="max-w-7xl mx-auto rounded-2xl py-1 md:px-8 px-4">
                 {{-- rekap absensi (diagram) --}}

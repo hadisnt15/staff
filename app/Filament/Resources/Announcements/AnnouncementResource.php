@@ -28,6 +28,8 @@ class AnnouncementResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Pengumuman';
 
+    protected static ?int $navigationSort = 7;
+
     public static function form(Schema $schema): Schema
     {
         return AnnouncementForm::configure($schema);

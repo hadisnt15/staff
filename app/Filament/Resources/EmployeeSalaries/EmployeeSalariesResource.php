@@ -31,6 +31,8 @@ class EmployeeSalariesResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Gaji Karyawan';
 
+    protected static ?int $navigationSort = 5;
+
     public static function form(Schema $schema): Schema
     {
         return EmployeeSalariesForm::configure($schema);
