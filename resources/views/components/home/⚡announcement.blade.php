@@ -67,48 +67,40 @@ new class extends Component
         </div>
     </div>
 </div>
+
+@script
 <script>
-    function initAnnouncementSwipe() {
-        const carousel = document.getElementById('default-carousel');
+$nextTick(() => {
+    const el = document.getElementById('default-carousel');
+
+    console.log('init');
+
+    let startX = 0;
+
+    el.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    el.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) < 50) return;
+
+        const carousel = FlowbiteInstances.getInstance('Carousel', 'default-carousel');
+
+        console.log(carousel);
 
         if (!carousel) return;
 
-        // Jangan pasang event berkali-kali
-        if (carousel.dataset.swipeInitialized) return;
-        carousel.dataset.swipeInitialized = 'true';
-
-        const instance = FlowbiteInstances.getInstance('Carousel', 'default-carousel');
-
-        if (!instance) return;
-
-        let startX = 0;
-
-        carousel.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-        }, { passive: true });
-
-        carousel.addEventListener('touchend', (e) => {
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-
-            // minimal geser 50px
-            if (Math.abs(diff) < 50) return;
-
-            if (diff > 0) {
-                instance.next(); // swipe kiri
-            } else {
-                instance.prev(); // swipe kanan
-            }
-        }, { passive: true });
-    }
-
-    // pertama kali halaman dibuka
-    document.addEventListener('DOMContentLoaded', () => {
-        initAnnouncementSwipe();
-    });
-
-    // kalau pakai Livewire Navigate
-    document.addEventListener('livewire:navigated', () => {
-        initAnnouncementSwipe();
-    });
+        if (diff > 0) {
+            console.log('NEXT');
+            carousel.next();
+        } else {
+            console.log('PREV');
+            carousel.prev();
+        }
+    }, { passive: true });
+});
 </script>
+@endscript
