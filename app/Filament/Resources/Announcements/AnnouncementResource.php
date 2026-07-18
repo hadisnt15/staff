@@ -24,7 +24,7 @@ class AnnouncementResource extends Resource
 
     protected static ?string $navigationLabel = 'Pengumuman';
 
-    protected static ?string $modelLabel = 'Employee Salary';
+    protected static ?string $modelLabel = 'Pengumuman';
 
     protected static ?string $pluralModelLabel = 'Pengumuman';
 

@@ -29,7 +29,7 @@ class BranchResource extends Resource
 
     protected static ?string $navigationLabel = 'Cabang';
 
-    protected static ?string $modelLabel = 'Branch';
+    protected static ?string $modelLabel = 'Cabang';
 
     protected static ?string $pluralModelLabel = 'Cabang';
 
