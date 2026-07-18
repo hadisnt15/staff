@@ -29,20 +29,20 @@ new class extends Component
                         </p>
                         <h3 class="font-semibold mb-1 mt-4">Pengenalan Fitur</h3>
                         <p class="px-1">
-                            Sistem absensi menyediakan 4 buah fitur tombol, yaitu Absen Masuk, Absen Keluar, Absen Luar Kota, dan Absen Tidak Hadir.
+                            Sistem absensi menyediakan 4 buah fitur tombol, yaitu:
                         </p>
                         <ol class="list-decimal ml-5 space-y-1">
                             <li>
-                                <i>Absen Masuk</i> digunakan untuk mencatat absen <i>datang</i>, <i>mulai istirahat</i>, dan <i>mulai izin keluar</i>.
+                                Absen Masuk digunakan untuk mencatat absen datang, mulai istirahat, dan mulai izin keluar.
                             </li>
                             <li>
-                                <i>Absen Keluar</i> digunakan untuk mencatat absen <i>pulang</i>, <i>selesai istirahat</i>, dan <i>selesai izin keluar</i>.
+                                Absen Keluar digunakan untuk mencatat absen pulang, selesai istirahat, dan selesai izin keluar.
                             </li>
                             <li>
-                                <i>Absen Luar Kota</i> digunakan untuk mencatat absensi karyawan yang bertugas ke luar kota.
+                                Absen Luar Kota digunakan untuk mencatat absensi karyawan yang bertugas ke luar kota.
                             </li>
                             <li>
-                                <i>Absen Tidak Hadir</i> digunakan untuk mencatat absensi karyawan yang berhalangan hadir bekerja.
+                                Absen Tidak Hadir digunakan untuk mencatat absensi karyawan yang berhalangan hadir bekerja.
                             </li>
                         </ol>
                         <h3 class="font-semibold mb-1 mt-4">Aturan Absensi</h3>
