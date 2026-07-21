@@ -36,6 +36,17 @@ new class extends Component
                                 @foreach(range(1,6) as $i)
                                     <div data-carousel-item="{{ $i == 1 ? 'active' : '' }}" class="{{ $i == 1 ? '' : 'hidden' }} duration-500 ease-in-out">
                                         <img src="{{ asset("guide/Slide-$i.png") }}" alt="Slide {{ $i }}" class="mx-auto max-h-[70vh] w-auto rounded-xl" draggable="false">
+                                        @if ($i == 2)
+                                            <a href="{{ route('face-registration') }}" class="absolute right-[5%] bottom-[7%] rounded-lg bg-emerald-600 px-2 py-1 text-xs font-semibold text-white shadow hover:bg-emerald-700">
+                                                Registrasikan Wajah
+                                            </a>
+                                        @endif
+
+                                        @if ($i == 6)
+                                            <a href="{{ route('leave-plan') }}" class="absolute right-[5%] bottom-[7%] rounded-lg bg-emerald-600 px-2 py-1 text-xs font-semibold text-white shadow hover:bg-emerald-700">
+                                                Ajukan Rencana Cuti
+                                            </a>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
