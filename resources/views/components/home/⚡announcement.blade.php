@@ -69,38 +69,38 @@ new class extends Component
 </div>
 
 @script
-<script>
-$nextTick(() => {
-    const el = document.getElementById('default-carousel');
+    <script>
+        $nextTick(() => {
+            const el = document.getElementById('default-carousel');
 
-    console.log('init');
+            console.log('init');
 
-    let startX = 0;
+            let startX = 0;
 
-    el.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-    }, { passive: true });
+            el.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
 
-    el.addEventListener('touchend', (e) => {
-        const endX = e.changedTouches[0].clientX;
-        const diff = startX - endX;
+            el.addEventListener('touchend', (e) => {
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
 
-        if (Math.abs(diff) < 50) return;
+                if (Math.abs(diff) < 50) return;
 
-        const carousel = FlowbiteInstances.getInstance('Carousel', 'default-carousel');
+                const carousel = FlowbiteInstances.getInstance('Carousel', 'default-carousel');
 
-        console.log(carousel);
+                console.log(carousel);
 
-        if (!carousel) return;
+                if (!carousel) return;
 
-        if (diff > 0) {
-            console.log('NEXT');
-            carousel.next();
-        } else {
-            console.log('PREV');
-            carousel.prev();
-        }
-    }, { passive: true });
-});
-</script>
+                if (diff > 0) {
+                    console.log('NEXT');
+                    carousel.next();
+                } else {
+                    console.log('PREV');
+                    carousel.prev();
+                }
+            }, { passive: true });
+        });
+    </script>
 @endscript
