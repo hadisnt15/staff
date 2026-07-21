@@ -35,7 +35,7 @@ new class extends Component
                             <div class="relative overflow-hidden h-[380px] md:h-[520px] rounded-xl">
                                 @foreach(range(1,6) as $i)
                                     <div data-carousel-item="{{ $i == 1 ? 'active' : '' }}" class="{{ $i == 1 ? '' : 'hidden' }} duration-500 ease-in-out">
-                                        <img src="{{ asset("guide/slide-$i.png") }}" alt="Slide {{ $i }}" class="mx-auto max-h-[70vh] w-auto rounded-xl" draggable="false">
+                                        <img src="{{ asset("guide/Slide-$i.png") }}" alt="Slide {{ $i }}" class="mx-auto max-h-[70vh] w-auto rounded-xl" draggable="false">
                                     </div>
                                 @endforeach
                             </div>
