@@ -63,7 +63,16 @@ new class extends Component
             return;
         }
 
-        $this->step = 'done';
+        // sudah di tahap terakhir
+        $this->dispatch(
+            'show-alert',
+            message: 'Semua foto sudah lengkap. Silakan klik Simpan.'
+        );
+    }
+
+    public function isLastStep()
+    {
+        return $this->step === 'down';
     }
 
     public function takeSnapshot($photoBase64)
@@ -146,6 +155,7 @@ new class extends Component
         );
 
         $this->loadFace();
+        $this->showModal = false;
         $this->dispatch('face-reg-saved', message: 'Registrasi wajah berhasil disimpan.');
     }
 
@@ -287,7 +297,7 @@ new class extends Component
 
                     {{-- Tahap Selanjutnya --}}
                     <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="nextStep()" wire:loading.attr="disabled" wire:target="nextStep" @disabled($existingFace && $existingFace->isLocked()) title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="button" onclick="nextStep()" wire:loading.attr="disabled" wire:target="nextStep" @disabled($existingFace && $existingFace->isLocked() || $this->isLastStep()) title="{{ $this->isLastStep() ? 'Registrasi Wajah Sudah Di Tahap Akhir' : '' }}" title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span wire:loading.remove wire:target="nextStep">
                                 <i class="ri-arrow-right-circle-fill text-3xl"></i>
                             </span>

@@ -69,7 +69,7 @@ new #[Title('Daftarkan Wajah')] class extends Component
         </button>
 
         @if($successMessage)
-            <div class="rounded-md border border-green-300 bg-green-100 p-3 my-2">
+            <div class="rounded-lg border border-green-300 bg-green-100 p-3 my-2">
                 <div class="font-semibold text-green-800">
                     ✅ Berhasil
                 </div>

@@ -349,7 +349,7 @@ new class extends Component
     @if($showModalCheckin)
         <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2">
             <div class="bg-white w-full max-w-md rounded-2xl border">
-                <div class="bg-primary rounded-t-2xl mb-4">
+                <div class="bg-primary rounded-t-2xl shadow-md mb-4">
                     <h2 class="text-lg font-bold text-secondary p-2 text-white flex justify-between">
                         <div>
                             <i class="ri-login-circle-fill"></i> Masuk

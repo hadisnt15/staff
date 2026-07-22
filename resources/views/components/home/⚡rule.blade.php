@@ -24,9 +24,16 @@ new class extends Component
         </div>
         <div x-show="showRule" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style="display: none;">
             <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
-                <div class="flex items-center justify-between border-b px-6 py-2">
-                    <h2 class="text-md font-semibold">Panduan Penggunaan</h2>
-                    <button @click="showRule = false" class="text-red-500 hover:text-red-900 text-md font-semibold">✕</button>
+                <div class="flex items-center justify-between border-b border-white shadow-md px-2 py-2 bg-primary rounded-t-xl ">
+                    <h2 class="text-md text-white font-semibold">Panduan Penggunaan</h2>
+                    {{-- <button @click="showRule = false" class="text-red-500 hover:text-red-900 text-md font-semibold">✕</button> --}}
+                    <div>
+                        <button @click="showRule = false">
+                            <span class="bg-danger text-white text-sm font-bold px-1.5 py-1.5 rounded">
+                                <i class="ri-close-large-fill"></i>
+                            </span>
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-y-auto">
                     <div class="">
@@ -57,7 +64,7 @@ new class extends Component
                                 @endforeach
                             </div>
                         </div>
-                        <div class="mt-1 text-center text-xs text-gray-500">
+                        <div class="mt-1 text-center text-xs text-primary font-semibold">
                             Geser ke kiri atau kanan untuk melihat panduan berikutnya.
                         </div>
                     </div>
