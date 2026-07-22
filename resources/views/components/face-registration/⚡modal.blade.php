@@ -346,6 +346,12 @@ new class extends Component
     });
 
     function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert(
+                'Browser tidak mendukung kamera. Silakan gunakan Google Chrome.'
+            );
+            return;
+        }
         const cam = document.getElementById('cam');
 
         if (!cam) return;
