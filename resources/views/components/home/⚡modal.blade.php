@@ -27,6 +27,8 @@ new class extends Component
     public $officeLng;
     public $allowedRadius = 30; // meter
     public $insideRadius = false;
+    public $breakUsed = false;
+    public $permissionUsed = false;
 
     protected $rules = [
         // 'photo' => 'required|image|max:2048',
@@ -103,9 +105,7 @@ new class extends Component
 
         $userId = auth()->id();
 
-        $last = Attendance::where('user_id', $userId)
-            ->latest('attendance_datetime')
-            ->first();
+        $last = Attendance::where('user_id', $userId)->whereDate('attendance_datetime', today())->latest('attendance_datetime')->first();
 
         // ✅ cek sudah absen masuk hari ini atau belum
         $hasCheckinToday = Attendance::where('user_id', $userId)
@@ -118,6 +118,8 @@ new class extends Component
         // ❗ kalau belum ada absen masuk → disable break & permission
         if (!$hasCheckinToday) {
             $this->disableSpecialMode = true;
+        } else {
+            $this->disableSpecialMode = false;
         }
 
         if (!$last) {
@@ -138,6 +140,18 @@ new class extends Component
             $this->mode = 'normal';
             $this->lockedMode = null;
         }
+
+        $this->breakUsed = Attendance::where('user_id', $userId)
+            ->whereDate('attendance_datetime', today())
+            ->where('attendance_break', 1)
+            ->where('attendance_type', 'absen_keluar')
+            ->exists();
+
+        $this->permissionUsed = Attendance::where('user_id', $userId)
+            ->whereDate('attendance_datetime', today())
+            ->where('attendance_permission', 1)
+            ->where('attendance_type', 'absen_keluar')
+            ->exists();
     }
 
     public function clearPhotoError()
@@ -210,6 +224,7 @@ new class extends Component
         }
 
         $last = Attendance::where('user_id', $userId)
+            ->whereDate('attendance_datetime', today())
             ->latest('attendance_datetime')
             ->first();
 
@@ -365,20 +380,39 @@ new class extends Component
                 @error('note')
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span>
                 @enderror
-                <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
-                        Datang
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
-                        Selesai Istirahat
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
-                        Selesai Izin Keluar
-                    </label>
-                </div>
+                <ul class="grid grid-cols-3 gap-2 px-2 py-2">
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-normal" value="normal" class="hidden peer" {{ $lockedMode ? 'disabled' : '' }}>
+                        <label for="mode-normal" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700 hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Datang
+                        </label>
+                    </li>
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-break" value="break" class="hidden peer" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                        <label for="mode-break" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700
+                                hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Selesai Istirahat
+                        </label>
+                    </li>
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-permission" value="permission" class="hidden peer" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                        <label for="mode-permission" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700 hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Selesai Izin
+                        </label>
+                    </li>
+                </ul>
+                @if($breakUsed || $permissionUsed)
+                    <div class="mt-2 mx-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                        <i class="ri-information-line"></i>
+                        @if($breakUsed && $permissionUsed)
+                            Jatah istirahat dan izin keluar hari ini sudah digunakan.
+                        @elseif($breakUsed)
+                            Jatah istirahat hari ini sudah digunakan.
+                        @else
+                            Jatah izin keluar hari ini sudah digunakan.
+                        @endif
+                    </div>
+                @endif
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 
@@ -452,20 +486,53 @@ new class extends Component
                 @error('note')
                     <span class="text-red-500 text-sm px-2">{{ $message }}</span>
                 @enderror
-                <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
+                {{-- <div class="flex flex-wrap gap-4 px-2 py-2 text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="normal" {{ $lockedMode ? 'disabled' : '' }}>
                         Pulang
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="break" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) || ($breakUsed && !$lockedMode) ? 'disabled' : '' }}>
                         Mulai Istirahat
                     </label>
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) ? 'disabled' : '' }}>
+                        <input type="radio" wire:model="mode" class="h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500" value="permission" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) || ($permissionUsed && !$lockedMode) ? 'disabled' : '' }}>
                         Mulai Izin Keluar
                     </label>
-                </div>
+                </div> --}}
+                <ul class="grid grid-cols-3 gap-2 px-2 py-2">
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-normal" value="normal" class="hidden peer" {{ $lockedMode ? 'disabled' : '' }}>
+                        <label for="mode-normal" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700 hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Pulang
+                        </label>
+                    </li>
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-break" value="break" class="hidden peer" {{ ($lockedMode && $lockedMode !== 'break') || ($disableSpecialMode && !$lockedMode) || ($breakUsed && !$lockedMode) ? 'disabled' : '' }}>
+                        <label for="mode-break" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700
+                                hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Mulai Istirahat
+                        </label>
+                    </li>
+                    <li>
+                        <input wire:model="mode" type="radio" id="mode-permission" value="permission" class="hidden peer" {{ ($lockedMode && $lockedMode !== 'permission') || ($disableSpecialMode && !$lockedMode) || ($permissionUsed && !$lockedMode) ? 'disabled' : '' }}>
+                        <label for="mode-permission" class="flex items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium cursor-pointer border-gray-300 bg-white text-gray-700 hover:bg-gray-50 peer-checked:border-emerald-600 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed">
+                            Mulai Izin
+                        </label>
+                    </li>
+                </ul>
+                @if($breakUsed || $permissionUsed)
+                    <div class="mt-2 mx-2 rounded-lg border border-amber-200 bg-amber-50 px-2 py-1 text-xs text-amber-700">
+                        <i class="ri-information-line"></i>
+                        @if($breakUsed && $permissionUsed)
+                            Jatah istirahat dan izin keluar hari ini sudah digunakan.
+                        @elseif($breakUsed)
+                            Jatah istirahat hari ini sudah digunakan.
+                        @else
+                            Jatah izin keluar hari ini sudah digunakan.
+                        @endif
+                    </div>
+                @endif
                 <div>
                     <input type="hidden" wire:model="lat">
                     @error('lat') 

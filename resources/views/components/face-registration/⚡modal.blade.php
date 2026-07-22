@@ -174,6 +174,7 @@ new class extends Component
     public function cancel()
     {
         $this->showModal = false;
+        $this->dispatch('reset-camera');
     }
 };
 ?>
@@ -256,7 +257,7 @@ new class extends Component
                 <div class="grid grid-cols-3 gap-2 p-2 mt-4">
                     {{-- Ambil Gambar --}}
                     <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="takeSnapshot()" wire:loading.attr="disabled" wire:target="takeSnapshot" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="button" onclick="takeSnapshot()" wire:loading.attr="disabled" wire:target="takeSnapshot" @disabled($existingFace && $existingFace->isLocked()) title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span wire:loading.remove wire:target="takeSnapshot">
                                 <i class="ri-camera-4-fill text-3xl"></i>
                             </span>
@@ -271,7 +272,7 @@ new class extends Component
 
                     {{-- Ulangi Gambar --}}
                     <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="retakeSnapshot()" wire:loading.attr="disabled" wire:target="retakeSnapshot" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="button" onclick="retakeSnapshot()" wire:loading.attr="disabled" wire:target="retakeSnapshot" @disabled($existingFace && $existingFace->isLocked()) title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span wire:loading.remove wire:target="retakeSnapshot">
                                 <i class="ri-camera-ai-2-fill text-3xl"></i>
                             </span>
@@ -286,7 +287,7 @@ new class extends Component
 
                     {{-- Tahap Selanjutnya --}}
                     <div class="flex flex-col items-center justify-center text-center">
-                        <button type="button" onclick="nextStep()" wire:loading.attr="disabled" wire:target="nextStep" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="button" onclick="nextStep()" wire:loading.attr="disabled" wire:target="nextStep" @disabled($existingFace && $existingFace->isLocked()) title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl h-10 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span wire:loading.remove wire:target="nextStep">
                                 <i class="ri-arrow-right-circle-fill text-3xl"></i>
                             </span>
@@ -300,7 +301,7 @@ new class extends Component
                     </div>
                 </div>
                 <div class="flex flex-col items-center justify-center text-center px-2 py-2">
-                    <button  wire:click="save" wire:loading.attr="disabled" wire:target="save" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button  wire:click="save" wire:loading.attr="disabled" wire:target="save" @disabled($existingFace && $existingFace->isLocked()) title="{{ $existingFace && $existingFace->isLocked() ? 'Registrasi Wajah Sudah Disetujui' : '' }}" class="w-full bg-primary hover:bg-emerald-700 text-white rounded-xl w-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed">
                         <!-- icon normal -->
                         <span wire:loading.remove wire:target="save">
                             <i class="ri-arrow-down-circle-fill text-3xl"></i>

@@ -79,6 +79,13 @@ new class extends Component
 
             el.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
+
+                const carousel = FlowbiteInstances.getInstance('Carousel', 'default-carousel');
+                if (carousel) {
+                    carousel.pause();
+                }
+
+                clearTimeout(autoResume);
             }, { passive: true });
 
             el.addEventListener('touchend', (e) => {
