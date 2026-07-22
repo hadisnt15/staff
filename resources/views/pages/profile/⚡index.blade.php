@@ -28,7 +28,7 @@ new #[Title('Profil Saya')] class extends Component
                 'required',
                 'string',
                 'unique:users,username,' . auth()->id(),
-                'regex:/^[A-Za-z0-9_]+$/',
+                'regex:/^[a-z0-9_]+$/',
                 'min:4',
                 'max:20',
             ]
@@ -38,7 +38,7 @@ new #[Title('Profil Saya')] class extends Component
             'name.max' => 'Nama maksimal 50 karakter.',
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
-            'username.regex' => 'Username hanya boleh berisi huruf, angka, dan underscore (_).',
+            'username.regex' => 'Username hanya boleh berisi huruf kecil, angka, dan underscore (_).',
             'username.min' => 'Username minimal 4 karakter.',
             'username.max' => 'Username maksimal 20 karakter.',
         ]);
