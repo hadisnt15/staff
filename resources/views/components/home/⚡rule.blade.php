@@ -24,8 +24,8 @@ new class extends Component
         </div>
         <div x-show="showRule" x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" style="display: none;">
             <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
-                <div class="flex items-center justify-between border-b border-white shadow-md px-2 py-2 bg-primary rounded-t-xl ">
-                    <h2 class="text-md text-white font-semibold">Panduan Penggunaan</h2>
+                <div class="flex items-center justify-between border-b border-white px-2 py-2 bg-primary rounded-t-xl ">
+                    <h2 class="text-md text-white font-semibold"><i class="ri-git-repository-line me-2"></i>Panduan Penggunaan</h2>
                     {{-- <button @click="showRule = false" class="text-red-500 hover:text-red-900 text-md font-semibold">✕</button> --}}
                     <div>
                         <button @click="showRule = false">
