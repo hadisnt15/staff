@@ -215,4 +215,4 @@ FROM (
 		) T0
 	) T0
 ) T0
-WHERE T0.tanggal = '2026-03-18'
+-- WHERE T0.tanggal = '2026-03-18'
