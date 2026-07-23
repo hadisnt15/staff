@@ -85,6 +85,24 @@ log("Secure Context : " + isSecureContext);
 log("mediaDevices : " + !!navigator.mediaDevices);
 log("getUserMedia : " + !!navigator.mediaDevices?.getUserMedia);
 
+// async function startCamera(){
+//     log("========== START ==========");
+//     try{
+//         const stream = await navigator.mediaDevices.getUserMedia({
+//             video:{
+//                 facingMode:"user"
+//             },
+//             audio:false
+//         });
+//         log("SUCCESS");
+//         document.getElementById("video").srcObject = stream;
+//     }catch(e){
+//         log("ERROR NAME : " + e.name);
+//         log("ERROR MSG  : " + e.message);
+//         alert(e.name + "\n" + e.message);
+//     }
+// }
+
 async function startCamera(){
 
     log("========== START ==========");
@@ -92,9 +110,7 @@ async function startCamera(){
     try{
 
         const stream = await navigator.mediaDevices.getUserMedia({
-            video:{
-                facingMode:"user"
-            },
+            video:true,
             audio:false
         });
 
@@ -107,7 +123,6 @@ async function startCamera(){
         log("ERROR NAME : " + e.name);
         log("ERROR MSG  : " + e.message);
 
-        alert(e.name + "\n" + e.message);
     }
 
 }
