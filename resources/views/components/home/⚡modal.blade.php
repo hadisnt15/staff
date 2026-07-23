@@ -854,6 +854,30 @@ new class extends Component
         }
     }
 
+    // function startCamera() {
+    //     const cam = document.getElementById('cam');
+    //     Webcam.reset();
+    //     Webcam.set({
+    //         width: cam.clientWidth,
+    //         height: cam.clientWidth * 0.55,
+    //         image_format: 'jpeg',
+    //         jpeg_quality: 90,
+    //         constraints: {
+    //             facingMode: currentCamera
+    //         }
+    //     });
+    //     Webcam.attach('#cam');
+    //     setTimeout(() => {
+    //         const video = document.querySelector('#cam video');
+    //         if (video) {
+    //             video.classList.add(
+    //                 'w-full',
+    //                 'h-full',
+    //                 'object-cover'
+    //             );
+    //         }
+    //     }, 300);
+    // }
     function startCamera() {
         const cam = document.getElementById('cam');
         Webcam.reset();
@@ -863,20 +887,20 @@ new class extends Component
             image_format: 'jpeg',
             jpeg_quality: 90,
             constraints: {
-                facingMode: currentCamera
+                video: {
+                    facingMode: {
+                        ideal: "user"
+                    }
+                },
+                audio: false
             }
         });
-        Webcam.attach('#cam');
-        setTimeout(() => {
+        Webcam.attach('#cam', function() {
             const video = document.querySelector('#cam video');
             if (video) {
-                video.classList.add(
-                    'w-full',
-                    'h-full',
-                    'object-cover'
-                );
+                video.classList.add('w-full', 'h-full', 'object-cover');
             }
-        }, 300);
+        });
     }
 
     function takeSnapshot() {
