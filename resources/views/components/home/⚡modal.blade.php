@@ -880,9 +880,7 @@ new class extends Component
     // }
     function startCamera() {
         const cam = document.getElementById('cam');
-
         Webcam.reset();
-
         Webcam.set({
             width: cam.clientWidth,
             height: cam.clientWidth * 0.55,
@@ -897,14 +895,10 @@ new class extends Component
                 audio: false
             }
         });
-
         Webcam.attach('#cam');
-
         Webcam.on('live', function() {
             console.log('CAMERA LIVE');
-
             const video = document.querySelector('#cam video');
-
             if (video) {
                 video.classList.add(
                     'w-full',

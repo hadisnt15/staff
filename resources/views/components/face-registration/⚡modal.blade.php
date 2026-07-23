@@ -355,37 +355,68 @@ new class extends Component
         });
     });
 
+    // function startCamera() {
+    //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    //         alert(
+    //             'Browser tidak mendukung kamera. Silakan gunakan Google Chrome.'
+    //         );
+    //         return;
+    //     }
+    //     const cam = document.getElementById('cam');
+
+    //     if (!cam) return;
+
+    //     if (Webcam) Webcam.reset();
+
+    //     Webcam.set({
+    //         width: cam.clientWidth,
+    //         height: cam.clientWidth * 0.55,
+    //         image_format: 'jpeg',
+    //         jpeg_quality: 90,
+    //         constraints: {
+    //             facingMode: 'user'
+    //         }
+    //     });
+
+    //     Webcam.attach('#cam');
+
+    //     setTimeout(() => {
+    //         const video = document.querySelector('#cam video');
+    //         if (video) {
+    //             video.classList.add('w-full','h-full','object-cover');
+    //         }
+    //     }, 500);
+    // }
     function startCamera() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert(
-                'Browser tidak mendukung kamera. Silakan gunakan Google Chrome.'
-            );
-            return;
-        }
         const cam = document.getElementById('cam');
-
-        if (!cam) return;
-
-        if (Webcam) Webcam.reset();
-
+        Webcam.reset();
         Webcam.set({
             width: cam.clientWidth,
             height: cam.clientWidth * 0.55,
             image_format: 'jpeg',
             jpeg_quality: 90,
             constraints: {
-                facingMode: 'user'
+                video: {
+                    facingMode: {
+                        ideal: 'user'
+                    }
+                },
+                audio: false
             }
         });
-
         Webcam.attach('#cam');
-
-        setTimeout(() => {
+        Webcam.on('live', function() {
+            console.log('CAMERA LIVE');
             const video = document.querySelector('#cam video');
             if (video) {
-                video.classList.add('w-full','h-full','object-cover');
+                video.classList.add(
+                    'w-full',
+                    'h-full',
+                    'object-cover'
+                );
+                video.play();
             }
-        }, 500);
+        });
     }
 
     function capture() {
