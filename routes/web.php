@@ -107,18 +107,43 @@ async function startCamera(){
 
     log("========== START ==========");
 
-    try{
+    try {
+
+        // cek permission browser
+        if (navigator.permissions) {
+            const permission = await navigator.permissions.query({
+                name: "camera"
+            });
+
+            log("Camera permission state : " + permission.state);
+        }
+
+        // cek device
+        const devices = await navigator.mediaDevices.enumerateDevices();
+
+        devices.forEach(device => {
+            log(
+                device.kind +
+                " | " +
+                device.label +
+                " | " +
+                device.deviceId
+            );
+        });
+
 
         const stream = await navigator.mediaDevices.getUserMedia({
             video:true,
             audio:false
         });
 
+
         log("SUCCESS");
 
         document.getElementById("video").srcObject = stream;
 
-    }catch(e){
+
+    } catch(e){
 
         log("ERROR NAME : " + e.name);
         log("ERROR MSG  : " + e.message);
