@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Attendance;
 use App\Models\AttendanceSummary;
 use App\Models\Holiday;
 use Carbon\Carbon;
@@ -34,24 +35,10 @@ class AttendanceSummaryService
         $now = now();
         $endOrNow = $start->isSameMonth($now) ? $now : $end;
 
-        $baseQuery = AttendanceSummary::query()
-            ->where('id_pengguna', $userId)
-            ->whereYear('tanggal', $year)
-            ->whereMonth('tanggal', $month);
-
-        // clone query biar gak bentrok
-        $presenceCount = (clone $baseQuery)
-            ->whereBetween('poin_kehadiran', [0, 5])
-            ->count();
-
-        $lateCount = (clone $baseQuery)
-            ->whereBetween('poin_kehadiran', [1, 4])
-            ->count();
-
-        $leaveCount = (clone $baseQuery)
-            ->whereBetween('poin_kehadiran', [6, 7])
-            ->count();
-
+        $baseQuery = AttendanceSummary::query()->where('id_pengguna', $userId)->whereYear('tanggal', $year)->whereMonth('tanggal', $month);
+        $presenceCount = (clone $baseQuery)->whereBetween('poin_kehadiran', [0, 5])->count();
+        $lateCount = (clone $baseQuery)->whereBetween('poin_kehadiran', [1, 4])->count();
+        $leaveCount = (clone $baseQuery)->whereBetween('poin_kehadiran', [6, 7])->count();
         $ontimeCount = $presenceCount - $lateCount;
 
         $holidayCountEnd = Holiday::whereBetween('holiday_date', [$start, $end])->count();
@@ -123,5 +110,44 @@ class AttendanceSummaryService
             ->where('id_pengguna', $userId)
             ->whereYear('tanggal', $year)
             ->whereMonth('tanggal', $month);
+    }
+
+    public static function yearOptions()
+    {
+        $years = AttendanceSummary::query()->selectRaw('YEAR(tanggal) as year')->distinct()->orderByDesc('year')->pluck('year');
+        return $years;
+    }
+
+    public static function monthOptions(int $year)
+    {
+        $months = AttendanceSummary::query()->whereYear('tanggal', $year)->selectRaw('MONTH(tanggal) as month')->distinct()->orderByDesc('month')->pluck('month');
+        return $months;
+    }
+
+    public static function allAttendanceSummary(int $year, ?int $month)
+    {
+        $firstAttendance = Attendance::query()
+            ->selectRaw('user_id, DATE(MIN(attendance_datetime)) as first_date')
+            ->groupBy('user_id');
+        $attendanceSummary = AttendanceSummary::query()
+            ->with('user')
+            ->joinSub($firstAttendance, 'first_attendance', function ($join) {
+                $join->on(
+                    'vattendance_summaries.id_pengguna',
+                    '=',
+                    'first_attendance.user_id'
+                );
+            })
+            ->whereYear('vattendance_summaries.tanggal', $year)
+            ->whereMonth('vattendance_summaries.tanggal', $month)
+            ->whereColumn(
+                'vattendance_summaries.tanggal',
+                '>=',
+                'first_attendance.first_date'
+            )
+            ->select('vattendance_summaries.*')
+            ->get()
+            ->groupBy('id_pengguna');
+        return $attendanceSummary;
     }
 }

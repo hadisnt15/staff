@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
+Route::livewire('/employee/presence', 'pages::employee.presence.index')->name('employee.presence');
+
 Route::get('/test-cam', function () {
     return <<<'HTML'
 <!DOCTYPE html>
@@ -84,24 +86,6 @@ log("Protocol : " + location.protocol);
 log("Secure Context : " + isSecureContext);
 log("mediaDevices : " + !!navigator.mediaDevices);
 log("getUserMedia : " + !!navigator.mediaDevices?.getUserMedia);
-
-// async function startCamera(){
-//     log("========== START ==========");
-//     try{
-//         const stream = await navigator.mediaDevices.getUserMedia({
-//             video:{
-//                 facingMode:"user"
-//             },
-//             audio:false
-//         });
-//         log("SUCCESS");
-//         document.getElementById("video").srcObject = stream;
-//     }catch(e){
-//         log("ERROR NAME : " + e.name);
-//         log("ERROR MSG  : " + e.message);
-//         alert(e.name + "\n" + e.message);
-//     }
-// }
 
 async function startCamera(){
 

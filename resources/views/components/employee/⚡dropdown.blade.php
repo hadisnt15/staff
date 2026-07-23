@@ -33,8 +33,9 @@ new class extends Component
     public function userPeriods()
     {
         if (empty($this->selectedUser)) return [];
-
-        return AttendanceSummaryService::periodOptions((int) $this->selectedUser);
+        $periods = AttendanceSummaryService::periodOptions((int) $this->selectedUser);
+        // dd($periods);
+        return $periods;
     }
 
     public function updatedSelectedUser($value)

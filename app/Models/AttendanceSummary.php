@@ -11,4 +11,9 @@ class AttendanceSummary extends Model
     public $timestamps = false;
 
     protected $guarded = [];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_pengguna');
+    }
 }
