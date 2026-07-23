@@ -37,3 +37,83 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('logout');
 });
+
+Route::get('/test-cam', function () {
+    return <<<'HTML'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Camera</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            padding:20px;
+        }
+        video{
+            width:100%;
+            max-width:500px;
+            border:1px solid #ccc;
+        }
+        pre{
+            background:#f5f5f5;
+            padding:10px;
+            white-space:pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Camera Test</h2>
+
+<button onclick="startCamera()">Start Camera</button>
+
+<video id="video" autoplay playsinline muted></video>
+
+<pre id="log"></pre>
+
+<script>
+const log = (msg) => {
+    document.getElementById('log').textContent += msg + "\n";
+    console.log(msg);
+};
+
+log("UserAgent : " + navigator.userAgent);
+log("Protocol : " + location.protocol);
+log("Secure Context : " + isSecureContext);
+log("mediaDevices : " + !!navigator.mediaDevices);
+log("getUserMedia : " + !!navigator.mediaDevices?.getUserMedia);
+
+async function startCamera(){
+
+    log("========== START ==========");
+
+    try{
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video:{
+                facingMode:"user"
+            },
+            audio:false
+        });
+
+        log("SUCCESS");
+
+        document.getElementById("video").srcObject = stream;
+
+    }catch(e){
+
+        log("ERROR NAME : " + e.name);
+        log("ERROR MSG  : " + e.message);
+
+        alert(e.name + "\n" + e.message);
+    }
+
+}
+</script>
+
+</body>
+</html>
+HTML;
+});
