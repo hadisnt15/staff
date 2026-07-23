@@ -880,7 +880,9 @@ new class extends Component
     // }
     function startCamera() {
         const cam = document.getElementById('cam');
+
         Webcam.reset();
+
         Webcam.set({
             width: cam.clientWidth,
             height: cam.clientWidth * 0.55,
@@ -889,16 +891,27 @@ new class extends Component
             constraints: {
                 video: {
                     facingMode: {
-                        ideal: "user"
+                        ideal: 'user'
                     }
                 },
                 audio: false
             }
         });
-        Webcam.attach('#cam', function() {
+
+        Webcam.attach('#cam');
+
+        Webcam.on('live', function() {
+            console.log('CAMERA LIVE');
+
             const video = document.querySelector('#cam video');
+
             if (video) {
-                video.classList.add('w-full', 'h-full', 'object-cover');
+                video.classList.add(
+                    'w-full',
+                    'h-full',
+                    'object-cover'
+                );
+                video.play();
             }
         });
     }
