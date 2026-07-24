@@ -83,9 +83,12 @@ new class extends Component
                 </div>
                 <div class="p-5 overflow-y-auto">
                     <div class="space-y-1">
+                        <span class="px-2 font-semibold text-emerald-700">
+                            {{ \Carbon\Carbon::parse($attendanceDetails->first()->attendance_datetime)->locale('id')->translatedFormat('l, d F Y') }}
+                        </span>
                         @foreach($attendanceDetails as $attendance)
-                            <div class="border border-emerald-200 rounded-xl p-3 bg-white shadow-sm">
-                                <div class="flex gap-3">
+                            <div class="border border-emerald-200 rounded-xl px-2 py-1 bg-white shadow-sm">
+                                <div class="flex gap-4">
                                     <!-- Foto -->
                                     <div class="w-24 h-24 flex-shrink-0">
                                         @if($attendance->attendance_photo)
@@ -97,8 +100,7 @@ new class extends Component
                                     <!-- Detail -->
                                     <div class="flex-1 text-xs md:text-sm">
                                         <div class="font-semibold text-emerald-700">
-                                            {{ \Carbon\Carbon::parse($attendance->attendance_datetime)->locale('id')->translatedFormat('l, d F Y') }}
-                                            <span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700">
+                                            <span class="px-2 py-1 text-xs text-emerald-700">
                                                 @if($attendance->attendance_break == 0 && $attendance->attendance_permission == 0)  
                                                     @if($attendance->attendance_type == 'absen_masuk') Datang @else Pulang @endif
                                                 @elseif($attendance->attendance_break == 1 && $attendance->attendance_permission == 0)
