@@ -48,6 +48,18 @@ new class extends Component
             );
         }
     }
+
+    public function mount()
+    {
+        $this->selectedYear = now()->year;
+        $this->selectedMonth = now()->month;
+
+        $this->dispatch(
+            'attendance-filter-changed',
+            year: $this->selectedYear,
+            month: $this->selectedMonth
+        );
+    }
 };
 ?>
 

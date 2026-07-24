@@ -130,24 +130,21 @@ class AttendanceSummaryService
             ->selectRaw('user_id, DATE(MIN(attendance_datetime)) as first_date')
             ->groupBy('user_id');
         $attendanceSummary = AttendanceSummary::query()
-            ->with('user')
+            ->with(['user.branch'])
+            ->join('users', 'users.id', '=', 'vattendance_summaries.id_pengguna')
+            ->join('branches', 'branches.id', '=', 'users.branch_id')
             ->joinSub($firstAttendance, 'first_attendance', function ($join) {
-                $join->on(
-                    'vattendance_summaries.id_pengguna',
-                    '=',
-                    'first_attendance.user_id'
-                );
+                $join->on('vattendance_summaries.id_pengguna', '=', 'first_attendance.user_id');
             })
             ->whereYear('vattendance_summaries.tanggal', $year)
             ->whereMonth('vattendance_summaries.tanggal', $month)
-            ->whereColumn(
-                'vattendance_summaries.tanggal',
-                '>=',
-                'first_attendance.first_date'
-            )
+            ->whereColumn('vattendance_summaries.tanggal', '>=', 'first_attendance.first_date')
+            ->orderBy('branches.id')
+            ->orderBy('users.name')
             ->select('vattendance_summaries.*')
             ->get()
-            ->groupBy('id_pengguna');
+            ->groupBy(fn($item) => $item->user->branch->name)
+            ->map(fn($branch) => $branch->groupBy('id_pengguna'));
         return $attendanceSummary;
     }
 }
