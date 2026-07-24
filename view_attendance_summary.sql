@@ -29,7 +29,9 @@ SELECT
 	T0.ket_izin,
 	T0.poin_izin,
 	
+	T0.luar_kota,
 	T0.ket_luar_kota,
+	T0.tidak_hadir,
 	T0.ket_tidak_hadir,
 	
 	T0.poin_kehadiran,
@@ -82,12 +84,14 @@ FROM (
 			T0.ket_izin,
 			T0.poin_izin,
 			
+			T0.luar_kota,
 			T0.ket_luar_kota,
+			T0.tidak_hadir,
 			T0.ket_tidak_hadir,
 		
 			CASE
-		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang = 0 THEN 5
-		   	WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang BETWEEN 0.5 AND 1 THEN 4
+		   	    WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang = 0 THEN 5
+		   	    WHEN T0.ket_luar_kota IS NOT NULL AND T0.poin_datang BETWEEN 0.5 AND 1 THEN 4
 				WHEN T0.ket_tidak_hadir IS NOT NULL THEN 6
 				WHEN T0.jam_datang IS NULL AND T0.jam_pulang IS NULL THEN 7
 				ELSE (T0.poin_datang + T0.poin_pulang + T0.poin_istirahat + T0.poin_izin)
@@ -103,17 +107,17 @@ FROM (
 				T1.jam_datang,
 				T1.durasi_telat_datang,
 				CASE WHEN T1.durasi_telat_datang > 0 THEN 1 WHEN T1.jam_datang IS NULL AND CURDATE() = T1.tanggal AND CURTIME() <= T1.aturan_mulai_kerja THEN 0
-						WHEN T1.jam_datang IS NULL THEN 0.5 ELSE 0 END AS poin_datang,
+					WHEN T1.jam_datang IS NULL THEN 0.5 ELSE 0 END AS poin_datang,
 				CASE WHEN T1.jam_datang IS NULL AND CURDATE() = T1.tanggal AND CURTIME() <= T1.aturan_mulai_kerja THEN ''
-						WHEN T1.jam_datang IS NULL THEN 'Absen datang tidak ada.' ELSE 
+					WHEN T1.jam_datang IS NULL THEN 'Absen datang tidak ada.' ELSE 
 					(CASE WHEN T1.durasi_telat_datang > 0 THEN CONCAT('Datang telat ', T1.durasi_telat_datang, ' menit.') ELSE '' END) END AS ket_datang,
 				
 				T1.jam_pulang,
 				T1.durasi_duluan_pulang,
 				CASE WHEN T1.durasi_duluan_pulang > 0 THEN 1 WHEN T1.jam_pulang IS NULL AND CURDATE() = T1.tanggal AND CURTIME() <= T1.aturan_selesai_kerja THEN 0 
-						WHEN T1.jam_pulang IS NULL THEN 0.5 ELSE 0 END AS poin_pulang,
+					WHEN T1.jam_pulang IS NULL THEN 0.5 ELSE 0 END AS poin_pulang,
 				CASE WHEN T1.jam_pulang IS NULL AND CURDATE() = T1.tanggal AND CURTIME() <= T1.aturan_selesai_kerja THEN ''
-						WHEN T1.jam_pulang IS NULL THEN 'Absen pulang tidak ada.' ELSE 
+					WHEN T1.jam_pulang IS NULL THEN 'Absen pulang tidak ada.' ELSE 
 					(CASE WHEN T1.durasi_duluan_pulang > 0 THEN CONCAT('Pulang duluan ', T1.durasi_duluan_pulang, ' menit.') ELSE '' END) END AS ket_pulang,
 				
 				T1.jam_mulai_istirahat,
@@ -137,19 +141,21 @@ FROM (
                     ) THEN 'Istirahat tidak tepat waktu.'
                     ELSE ''
                 END AS ket_istirahat,
-            T1.jam_mulai_izin,
+                T1.jam_mulai_izin,
 				T1.jam_selesai_izin,
 				T1.durasi_izin,
 				CASE 
 					WHEN T1.jam_mulai_izin IS NULL AND T1.jam_selesai_izin IS NOT NULL THEN 0.5
-               WHEN T1.jam_mulai_izin IS NOT NULL AND T1.jam_selesai_izin IS NULL THEN 0.5
+                    WHEN T1.jam_mulai_izin IS NOT NULL AND T1.jam_selesai_izin IS NULL THEN 0.5
 					WHEN T1.durasi_izin <= 60 THEN 0.5 WHEN T1.durasi_izin > 60 THEN 1 ELSE 0 END poin_izin,
 				CASE 
 					WHEN T1.jam_mulai_izin IS NULL AND T1.jam_selesai_izin IS NOT NULL THEN 'Absen izin tidak lengkap.'
-               WHEN T1.jam_mulai_izin IS NOT NULL AND T1.jam_selesai_izin IS NULL THEN 'Absen izin tidak lengkap.'
+                     WHEN T1.jam_mulai_izin IS NOT NULL AND T1.jam_selesai_izin IS NULL THEN 'Absen izin tidak lengkap.'
 					WHEN T1.durasi_izin <= 60 THEN 'Izin di bawah 1 jam.' WHEN T1.durasi_izin > 60 THEN 'Izin di atas 1 jam.' ELSE '' END ket_izin,
 					
+				T1.luar_kota,
 				T1.ket_luar_kota,
+				T1.tidak_hadir,
 				T1.ket_tidak_hadir
 			FROM (
 				SELECT T0.*, T1.id AS id_pengguna, T1.`name` AS nama_pengguna, IFNULL(T2.holiday_note,'Hari Kerja') AS tanggal_merah
@@ -182,7 +188,9 @@ FROM (
 					T0.jam_mulai_izin,
 					T0.jam_selesai_izin,
 					TIMESTAMPDIFF(MINUTE, T0.jam_mulai_izin, T0.jam_selesai_izin) AS durasi_izin,
+					T0.luar_kota,
 					T0.ket_luar_kota,
+					T0.tidak_hadir,
 					T0.ket_tidak_hadir
 				FROM (
 					SELECT

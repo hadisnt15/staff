@@ -9,6 +9,7 @@ new class extends Component
 {
     public $selectedYear;
     public $selectedMonth;
+    public $selectedAttendance = null;
 
     #[On('attendance-filter-changed')]
     public function loadData($year, $month)
